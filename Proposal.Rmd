@@ -1,0 +1,46 @@
+---
+title: "Proposal"
+output: github_document
+---
+
+**Group Member:** Yujie Li(yl5906), Han Yang(hy2958), (xy2719), (yg3096), (sc5558)
+
+**Tentative Project Title:** Association Between Early Pregnancy Water Consumption and the Risk of Gestational Diabetes Mellitus(GDM): Based on the nuMoM2b Cohort
+
+**Project Motivation**
+
+Gestational Diabetes Mellitus (GDM) is a common pregnancy complication which can seriously threaten the health of both mother and baby. The pathological processes of this negative pregnancy outcome may begin in the early periconceptional period or even before pregnancy. (1) Diet and lifestyle are very important factors in early pregnancy. We found that existing research more focuses on complex dietary patterns (1) or specific micronutrients such as fatty acids (2). Water consumption is one of the most basic, easily change, and low cost daily behaviors. But systematic research in this area is lacking.
+
+**Intended Final Products**
+
+1. GitHub repository containing all analysis code and reports.
+2. The website presenting our research background, methods, results and conclusions.
+3. A short YouTube video.
+
+**Anticipated Data Sources**
+
+nuMoM2b (Nulliparous Pregnancy Outcomes Study: Monitoring Mothers-to-be) Cohort Research Dataset
+
+**Planned Analyses**
+
+_Exposure:_ Data were collected during early pregnancy (6-13 weeks) using the Food Frequency Questionnaire (FFQ). We extracted information regarding water and other beverage intake.
+
+_Outcome:_ Obtain pregnancy outcomes through medical records. Means diagnosis of gestational diabetes mellitus (GDM).
+
+_Covariates:_ from baseline data in nuMoM2b. Still thinking what should include.
+
+1. _Descriptive Statistics and Bivariate Analyses_ We need to test for statistically significant differences in baseline characteristics across the water consumption. We will categorize Total water consumption into 4 groups, Q1-Q4. The lowest intake Q1 will be reference group. And we will do ANOVA and Chi-square.
+
+2. _Multivariable Risk Models_ Evaluate the relationship between water consumption in early pregnancy and the risk of GDM. Also need to control confounding factors.
+
+3. _Dose Response and Sensitivity Analyses_ we want to evaluate if there is a linear trend in GDM risk across increasing quartiles of water consumption.
+
+**Planned Timeline**
+
+11.7-11.14 get data and do analyses part1 11.15-11.22 finish the rest of the analyses. 11.22-11.29 writing report and website. 11.30-12.6 peer review and record video.
+
+**Citation**
+
+1. Bodnar, L. M., Kirkpatrick, S. I., Parisi, S. M., Jin, Q., & Naimi, A. I. (2023). Periconceptional Dietary Patterns and Adverse Pregnancy and Birth Outcomes. *The Journal of Nutrition*.
+
+2. Robinson, D. T., Van Horn, L., Balmert, L., Silver, R. M., Parry, S., Haas, D. M., Wing, D. A., & Grobman, W. A. (2021). Dietary Fat and Fatty Acid Intake in Nulliparous Women: Associations with Preterm Birth and Distinctions by Maternal BMI. *Current Developments in Nutrition*, 5(5), nzab074.
