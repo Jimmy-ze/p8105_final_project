@@ -1,8 +1,8 @@
 Proposal
 ================
 
-**Group Member:** Yujie Li(yl5906), Han Yang(hy2958), (xy2719),
-(yg3096), (sc5558)
+**Group Member:** Yujie Li(yl5906), Han Yang(hy2958), Xinyi Yao(xy2719),
+(yg3096), Shiyun Cheng(sc5558)
 
 **Tentative Project Title:** Association Between Early Pregnancy Water
 Consumption and the Risk of Gestational Diabetes Mellitus(GDM): Based on
@@ -34,27 +34,31 @@ Cohort Research Dataset
 
 **Planned Analyses**
 
-*Exposure:* Data were collected during early pregnancy (6-13 weeks)
-using the Food Frequency Questionnaire (FFQ). We extracted information
-regarding water and other beverage intake.
+*Exposure: water consumption* Data were collected during early pregnancy
+(6-13 weeks) using the Food Frequency Questionnaire (FFQ). We extracted
+information regarding water and other beverage intake.
 
-*Outcome:* Obtain pregnancy outcomes through medical records. Means
-diagnosis of gestational diabetes mellitus (GDM).
+*Outcome:gestational diabetes mellitus (GDM)* Obtain pregnancy outcomes
+through medical records.
 
-*Covariates:* from baseline data in nuMoM2b. Still thinking what should
-include.
+*Covariates:* Maternal Age, Pre-pregnancy BMI, Race/Ethnicity,
+Education, Marital Status, Health Insurance, Pre-existing Chronic
+Hypertension, Gravidity, Smoking Status, Physical Activity, Nausea and
+Vomiting, Prenatal Vitamin Use, Total Energy Intake, Sugar-Sweetened
+Beverage Intake, Coffee Intake, 100% Fruit Juice Intake, Diet Beverage
+Intake, Milk Intake.
 
-1.  *Descriptive Statistics and Bivariate Analyses* We need to test for
+1.  *Descriptive Statistics and Bivariate Analyses:* We need to test for
     statistically significant differences in baseline characteristics
     across the water consumption. We will categorize Total water
     consumption into 4 groups, Q1-Q4. The lowest intake Q1 will be
     reference group. And we will do ANOVA and Chi-square.
 
-2.  *Multivariable Risk Models* Evaluate the relationship between water
+2.  *Multivariable Risk Models:* Evaluate the relationship between water
     consumption in early pregnancy and the risk of GDM. Also need to
     control confounding factors.
 
-3.  *Dose Response and Sensitivity Analyses* we want to evaluate if
+3.  *Dose Response and Sensitivity Analyses:* we want to evaluate if
     there is a linear trend in GDM risk across increasing quartiles of
     water consumption.
 
