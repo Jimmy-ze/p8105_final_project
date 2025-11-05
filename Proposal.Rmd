@@ -3,7 +3,7 @@ title: "Proposal"
 output: github_document
 ---
 
-**Group Member:** Yujie Li(yl5906), Han Yang(hy2958), (xy2719), (yg3096), (sc5558)
+**Group Member:** Yujie Li(yl5906), Han Yang(hy2958), (xy2719), Yiqun Guo(yg3096), (sc5558)
 
 **Tentative Project Title:** Association Between Early Pregnancy Water Consumption and the Risk of Gestational Diabetes Mellitus(GDM): Based on the nuMoM2b Cohort
 
