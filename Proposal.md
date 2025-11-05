@@ -2,7 +2,7 @@ Proposal
 ================
 
 **Group Member:** Yujie Li(yl5906), Han Yang(hy2958), Xinyi Yao(xy2719),
-(yg3096), Shiyun Cheng(sc5558)
+Yiqun Guo(yg3096), Shiyun Cheng(sc5558)
 
 **Tentative Project Title:** Association Between Early Pregnancy Water
 Consumption and the Risk of Gestational Diabetes Mellitus(GDM): Based on
