@@ -1,0 +1,351 @@
+---
+title: "Water Intake and Diabetes in US Adults: NHANES 2021-2023"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Load Packages and Data
+```{r load}
+library(tidyverse)
+library(readxl)
+library(tableone)
+library(knitr)
+library(kableExtra)
+
+# Read data
+data <- read_excel("final_data.xlsx")
+```
+
+# Data Preparation
+```{r prep}
+df <- data %>%
+  # Filter out Race categories with 0 observations
+  filter(!Race %in% c(6, 7)) %>%
+  mutate(
+    # Continuous variables as numeric
+    Age = as.numeric(Age),
+    BMI = as.numeric(BMI),
+    Income_PIR = as.numeric(Income_PIR),
+    Energy_kcal = as.numeric(Energy_kcal),
+    Sugar_g = as.numeric(Sugar_g),
+    Water_g = as.numeric(Water_g),
+    HbA1c = as.numeric(HbA1c),
+    
+    # Categorical variables as factors
+    Gender = factor(Gender, levels = c(0, 1), 
+                   labels = c("Female", "Male")),
+    
+    # Only keep Race categories with data (1,2,3,4)
+    Race = factor(Race, levels = c(1, 2, 3, 4),
+                 labels = c("Mexican American", "Other Hispanic", 
+                           "Non-Hispanic White", "Non-Hispanic Black")),
+    
+    Education = factor(Education, levels = c(1, 2, 3, 4, 5),
+                      labels = c("< 9th grade", "9-11th grade", 
+                                "High school/GED", "Some college", 
+                                "College grad+")),
+    
+    Smoking = factor(Smoking, levels = c(0, 1),
+                    labels = c("No", "Yes")),
+    
+    Diabetes = factor(Diabetes, levels = c(0, 1),
+                     labels = c("No", "Yes")),
+    
+    # Create water quartiles
+    Water_Q = cut(Water_g, 
+                  breaks = quantile(Water_g, probs = seq(0, 1, 0.25)),
+                  labels = c("Q1", "Q2", "Q3", "Q4"),
+                  include.lowest = TRUE)
+  )
+
+```
+
+# Table 1: Baseline Characteristics by Diabetes Status
+```{r table1}
+# Create table
+tab1 <- CreateTableOne(
+  vars = c("Age", "Gender", "Race", "Education", "BMI", "Income_PIR", 
+           "Smoking", "Energy_kcal", "Sugar_g", "Water_g", "HbA1c"),
+  strata = "Diabetes",
+  data = df,
+  factorVars = c("Gender", "Race", "Education", "Smoking"),
+  test = FALSE
+)
+
+# Get table output (median/IQR for continuous)
+tab1_print <- print(tab1, 
+                   nonnormal = c("Age", "BMI", "Income_PIR", "Energy_kcal", 
+                                "Sugar_g", "Water_g", "HbA1c"),
+                   showAllLevels = TRUE,
+                   printToggle = FALSE)
+
+# Calculate p-values
+# Continuous: Wilcoxon test
+# Categorical: Chi-square test
+p_vals <- c(
+  wilcox.test(Age ~ Diabetes, data = df)$p.value,
+  wilcox.test(BMI ~ Diabetes, data = df)$p.value,
+  wilcox.test(Income_PIR ~ Diabetes, data = df)$p.value,
+  wilcox.test(Energy_kcal ~ Diabetes, data = df)$p.value,
+  wilcox.test(Sugar_g ~ Diabetes, data = df)$p.value,
+  wilcox.test(Water_g ~ Diabetes, data = df)$p.value,
+  wilcox.test(HbA1c ~ Diabetes, data = df)$p.value,
+  chisq.test(table(df$Gender, df$Diabetes))$p.value,
+  chisq.test(table(df$Race, df$Diabetes))$p.value,
+  chisq.test(table(df$Education, df$Diabetes))$p.value,
+  chisq.test(table(df$Smoking, df$Diabetes))$p.value
+)
+
+# Format p-values
+format_p <- function(p) {
+  if(is.na(p)) return("NA")
+  if(p < 0.001) return("<0.001")
+  return(sprintf("%.3f", p))
+}
+
+p_fmt <- sapply(p_vals, format_p)
+
+# Add to table
+tab1_df <- as.data.frame(tab1_print)
+tab1_df$P <- ""
+var_names <- c("Age", "BMI", "Income_PIR", "Energy_kcal", "Sugar_g", 
+               "Water_g", "HbA1c", "Gender", "Race", "Education", "Smoking")
+for(i in 1:length(var_names)) {
+  rows <- grep(var_names[i], rownames(tab1_df))
+  if(length(rows) > 0) tab1_df$P[rows[1]] <- p_fmt[i]
+}
+
+# Display
+kable(tab1_df, caption = "Table 1: Baseline Characteristics by Diabetes Status") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  footnote(general = c("Continuous variables: Median (IQR), Wilcoxon rank-sum test",
+                      "Categorical variables: n (%), Chi-square test"))
+
+write.csv(tab1_df, "Table1.csv")
+```
+
+# Table 2: Baseline Characteristics by Water Quartiles
+```{r table2}
+# Create table
+tab2 <- CreateTableOne(
+  vars = c("Age", "Gender", "Race", "Education", "BMI", "Income_PIR", 
+           "Smoking", "Energy_kcal", "Sugar_g", "HbA1c", "Diabetes"),
+  strata = "Water_Q",
+  data = df,
+  factorVars = c("Gender", "Race", "Education", "Smoking", "Diabetes"),
+  test = FALSE
+)
+
+# Get table output
+tab2_print <- print(tab2,
+                   nonnormal = c("Age", "BMI", "Income_PIR", "Energy_kcal", 
+                                "Sugar_g", "HbA1c"),
+                   showAllLevels = TRUE,
+                   printToggle = FALSE)
+
+# Calculate p-values
+# Continuous: Kruskal-Wallis test (>2 groups)
+# Categorical: Chi-square test
+p_vals2 <- c(
+  kruskal.test(Age ~ Water_Q, data = df)$p.value,
+  kruskal.test(BMI ~ Water_Q, data = df)$p.value,
+  kruskal.test(Income_PIR ~ Water_Q, data = df)$p.value,
+  kruskal.test(Energy_kcal ~ Water_Q, data = df)$p.value,
+  kruskal.test(Sugar_g ~ Water_Q, data = df)$p.value,
+  kruskal.test(HbA1c ~ Water_Q, data = df)$p.value,
+  chisq.test(table(df$Gender, df$Water_Q))$p.value,
+  chisq.test(table(df$Race, df$Water_Q))$p.value,
+  chisq.test(table(df$Education, df$Water_Q))$p.value,
+  chisq.test(table(df$Smoking, df$Water_Q))$p.value,
+  chisq.test(table(df$Diabetes, df$Water_Q))$p.value
+)
+
+# Format
+p_fmt2 <- sapply(p_vals2, format_p)
+
+# Add to table
+tab2_df <- as.data.frame(tab2_print)
+tab2_df$P <- ""
+var_names2 <- c("Age", "BMI", "Income_PIR", "Energy_kcal", "Sugar_g", "HbA1c",
+                "Gender", "Race", "Education", "Smoking", "Diabetes")
+for(i in 1:length(var_names2)) {
+  rows <- grep(var_names2[i], rownames(tab2_df))
+  if(length(rows) > 0) tab2_df$P[rows[1]] <- p_fmt2[i]
+}
+
+# Display
+kable(tab2_df, caption = "Table 2: Baseline Characteristics by Water Quartiles") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  footnote(general = c("Continuous variables: Median (IQR), Kruskal-Wallis test",
+                      "Categorical variables: n (%), Chi-square test"))
+
+write.csv(tab2_df, "Table2.csv")
+```
+
+# Logistic Regression: Diabetes Risk
+```{r logistic}
+# Three models
+m1 <- glm(Diabetes ~ Water_g, data = df, family = binomial)
+m2 <- glm(Diabetes ~ Water_g + Age + Gender + Race + Education + Income_PIR, 
+          data = df, family = binomial)
+m3 <- glm(Diabetes ~ Water_g + Age + Gender + Race + Education + Income_PIR + 
+            BMI + Smoking + Energy_kcal + Sugar_g, 
+          data = df, family = binomial)
+
+# Extract results
+get_OR <- function(model, name) {
+  coef <- summary(model)$coefficients["Water_g", ]
+  data.frame(
+    Model = name,
+    OR = exp(coef[1]),
+    Lower = exp(coef[1] - 1.96*coef[2]),
+    Upper = exp(coef[1] + 1.96*coef[2]),
+    P = coef[4]
+  )
+}
+
+or_results <- rbind(
+  get_OR(m1, "Unadjusted"),
+  get_OR(m2, "Adjusted: Demographics"),
+  get_OR(m3, "Fully Adjusted")
+)
+
+# Format and display
+or_results %>%
+  mutate(
+    `OR (95% CI)` = sprintf("%.4f (%.4f-%.4f)", OR, Lower, Upper),
+    P = ifelse(P < 0.001, "<0.001", sprintf("%.3f", P))
+  ) %>%
+  select(Model, `OR (95% CI)`, P) %>%
+  kable(caption = "Logistic Regression: Association with Diabetes") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# Full model output
+summary(m3)
+```
+
+# Linear Regression: HbA1c Levels
+```{r linear}
+# Three models
+lm1 <- lm(HbA1c ~ Water_g, data = df)
+lm2 <- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR, 
+          data = df)
+lm3 <- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR + 
+            BMI + Smoking + Energy_kcal + Sugar_g, 
+          data = df)
+
+# Extract results
+get_Beta <- function(model, name) {
+  coef <- summary(model)$coefficients["Water_g", ]
+  ci <- confint(model)["Water_g", ]
+  data.frame(
+    Model = name,
+    Beta = coef[1],
+    Lower = ci[1],
+    Upper = ci[2],
+    P = coef[4]
+  )
+}
+
+beta_results <- rbind(
+  get_Beta(lm1, "Unadjusted"),
+  get_Beta(lm2, "Adjusted: Demographics"),
+  get_Beta(lm3, "Fully Adjusted")
+)
+
+# Format and display
+beta_results %>%
+  mutate(
+    `Beta (95% CI)` = sprintf("%.6f (%.6f, %.6f)", Beta, Lower, Upper),
+    P = ifelse(P < 0.001, "<0.001", sprintf("%.3f", P))
+  ) %>%
+  select(Model, `Beta (95% CI)`, P) %>%
+  kable(caption = "Linear Regression: Association with HbA1c") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# Full model output
+summary(lm3)
+```
+
+# Sensitivity Analysis: Water Quartiles
+```{r sensitivity}
+# Set reference group
+df$Water_Q <- relevel(df$Water_Q, ref = "Q1")
+
+# Logistic regression by quartiles
+mQ <- glm(Diabetes ~ Water_Q + Age + Gender + Race + Education + Income_PIR + 
+            BMI + Smoking + Energy_kcal + Sugar_g,
+          data = df, family = binomial)
+
+# Extract quartile results
+coef_q <- summary(mQ)$coefficients
+q_vars <- grep("Water_Q", rownames(coef_q), value = TRUE)
+
+q_results <- data.frame(
+  Quartile = c("Q1 (Ref)", q_vars),
+  OR = c(1, exp(coef_q[q_vars, 1])),
+  Lower = c(NA, exp(coef_q[q_vars, 1] - 1.96*coef_q[q_vars, 2])),
+  Upper = c(NA, exp(coef_q[q_vars, 1] + 1.96*coef_q[q_vars, 2])),
+  P = c(NA, coef_q[q_vars, 4])
+)
+
+# Display
+q_results %>%
+  mutate(
+    Quartile = str_replace(Quartile, "Water_Q", ""),
+    `OR (95% CI)` = ifelse(is.na(OR), "1.00 (Ref)", 
+                           sprintf("%.3f (%.3f-%.3f)", OR, Lower, Upper)),
+    P = ifelse(is.na(P), "-", 
+              ifelse(P < 0.001, "<0.001", sprintf("%.3f", P)))
+  ) %>%
+  select(Quartile, `OR (95% CI)`, P) %>%
+  kable(caption = "Diabetes Risk by Water Intake Quartiles (Fully Adjusted)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# Test across quartiles
+cat("\nKruskal-Wallis test (HbA1c by water quartiles):\n")
+kw_test <- kruskal.test(HbA1c ~ Water_Q, data = df)
+print(kw_test)
+
+cat("\nChi-square test (Diabetes by water quartiles):\n")
+chi_test <- chisq.test(table(df$Water_Q, df$Diabetes))
+print(chi_test)
+```
+
+# Summary
+```{r summary}
+cat("ANALYSIS SUMMARY\n")
+cat("================\n\n")
+cat(sprintf("Sample size: %d\n", nrow(df)))
+cat(sprintf("Diabetes prevalence: %.1f%%\n\n", 100*mean(df$Diabetes == "Yes")))
+
+cat("Main Findings:\n")
+cat(sprintf("- Fully adjusted OR: %.4f (95%% CI: %.4f-%.4f), P=%.3f\n",
+           or_results$OR[3], or_results$Lower[3], or_results$Upper[3], 
+           or_results$P[3]))
+cat(sprintf("- Fully adjusted Beta: %.6f (95%% CI: %.6f-%.6f), P=%.3f\n",
+           beta_results$Beta[3], beta_results$Lower[3], beta_results$Upper[3],
+           beta_results$P[3]))
+
+cat("\nInterpretation:\n")
+if(or_results$P[3] < 0.05) {
+  cat("- Water intake is significantly associated with diabetes risk (P<0.05).\n")
+} else {
+  cat("- Water intake is NOT significantly associated with diabetes risk (P≥0.05).\n")
+}
+
+if(beta_results$P[3] < 0.05) {
+  cat("- Water intake is significantly associated with HbA1c levels (P<0.05).\n")
+} else {
+  cat("- Water intake is NOT significantly associated with HbA1c levels (P≥0.05).\n")
+}
+```
+
+
+```{r}
+or_results$P[3]
+beta_results$P[3]
+```
+
