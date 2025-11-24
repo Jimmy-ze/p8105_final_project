@@ -13,18 +13,22 @@ library(readxl)
 library(tableone)
 library(knitr)
 library(kableExtra)
+library(patchwork)
+library(ggpubr)
+library(corrplot)
+library(gtsummary)
 
-# Read data
+#Read data
 data <- read_excel("final_data.xlsx")
 ```
 
 # Data Preparation
 ```{r prep}
 df <- data %>%
-  # Filter out Race categories with 0 observations
+  #Filter out Race categories with 0 observations
   filter(!Race %in% c(6, 7)) %>%
   mutate(
-    # Continuous variables as numeric
+    #Continuous variables as numeric
     Age = as.numeric(Age),
     BMI = as.numeric(BMI),
     Income_PIR = as.numeric(Income_PIR),
@@ -33,11 +37,11 @@ df <- data %>%
     Water_g = as.numeric(Water_g),
     HbA1c = as.numeric(HbA1c),
     
-    # Categorical variables as factors
+    #Categorical variables as factors
     Gender = factor(Gender, levels = c(0, 1), 
                    labels = c("Female", "Male")),
     
-    # Only keep Race categories with data (1,2,3,4)
+    #Only keep Race categories with data (1,2,3,4)
     Race = factor(Race, levels = c(1, 2, 3, 4),
                  labels = c("Mexican American", "Other Hispanic", 
                            "Non-Hispanic White", "Non-Hispanic Black")),
@@ -53,7 +57,7 @@ df <- data %>%
     Diabetes = factor(Diabetes, levels = c(0, 1),
                      labels = c("No", "Yes")),
     
-    # Create water quartiles
+    #Create water quartiles
     Water_Q = cut(Water_g, 
                   breaks = quantile(Water_g, probs = seq(0, 1, 0.25)),
                   labels = c("Q1", "Q2", "Q3", "Q4"),
@@ -64,7 +68,7 @@ df <- data %>%
 
 # Table 1: Baseline Characteristics by Diabetes Status
 ```{r table1}
-# Create table
+#Create table
 tab1 <- CreateTableOne(
   vars = c("Age", "Gender", "Race", "Education", "BMI", "Income_PIR", 
            "Smoking", "Energy_kcal", "Sugar_g", "Water_g", "HbA1c"),
@@ -74,16 +78,16 @@ tab1 <- CreateTableOne(
   test = FALSE
 )
 
-# Get table output (median/IQR for continuous)
+#Get table output (median/IQR for continuous)
 tab1_print <- print(tab1, 
                    nonnormal = c("Age", "BMI", "Income_PIR", "Energy_kcal", 
                                 "Sugar_g", "Water_g", "HbA1c"),
                    showAllLevels = TRUE,
                    printToggle = FALSE)
 
-# Calculate p-values
-# Continuous: Wilcoxon test
-# Categorical: Chi-square test
+#Calculate p-values
+#Continuous: Wilcoxon test
+#Categorical: Chi-square test
 p_vals <- c(
   wilcox.test(Age ~ Diabetes, data = df)$p.value,
   wilcox.test(BMI ~ Diabetes, data = df)$p.value,
@@ -98,7 +102,7 @@ p_vals <- c(
   chisq.test(table(df$Smoking, df$Diabetes))$p.value
 )
 
-# Format p-values
+#Format p-values
 format_p <- function(p) {
   if(is.na(p)) return("NA")
   if(p < 0.001) return("<0.001")
@@ -107,7 +111,7 @@ format_p <- function(p) {
 
 p_fmt <- sapply(p_vals, format_p)
 
-# Add to table
+#Add to table
 tab1_df <- as.data.frame(tab1_print)
 tab1_df$P <- ""
 var_names <- c("Age", "BMI", "Income_PIR", "Energy_kcal", "Sugar_g", 
@@ -117,7 +121,7 @@ for(i in 1:length(var_names)) {
   if(length(rows) > 0) tab1_df$P[rows[1]] <- p_fmt[i]
 }
 
-# Display
+#show
 kable(tab1_df, caption = "Table 1: Baseline Characteristics by Diabetes Status") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   footnote(general = c("Continuous variables: Median (IQR), Wilcoxon rank-sum test",
@@ -128,7 +132,7 @@ write.csv(tab1_df, "Table1.csv")
 
 # Table 2: Baseline Characteristics by Water Quartiles
 ```{r table2}
-# Create table
+#Create table
 tab2 <- CreateTableOne(
   vars = c("Age", "Gender", "Race", "Education", "BMI", "Income_PIR", 
            "Smoking", "Energy_kcal", "Sugar_g", "HbA1c", "Diabetes"),
@@ -138,16 +142,16 @@ tab2 <- CreateTableOne(
   test = FALSE
 )
 
-# Get table output
+#table output
 tab2_print <- print(tab2,
                    nonnormal = c("Age", "BMI", "Income_PIR", "Energy_kcal", 
                                 "Sugar_g", "HbA1c"),
                    showAllLevels = TRUE,
                    printToggle = FALSE)
 
-# Calculate p-values
-# Continuous: Kruskal-Wallis test (>2 groups)
-# Categorical: Chi-square test
+#Calculate p-values
+#Continuous: Kruskal-Wallis test (>2 groups)
+#Categorical: Chi-square test
 p_vals2 <- c(
   kruskal.test(Age ~ Water_Q, data = df)$p.value,
   kruskal.test(BMI ~ Water_Q, data = df)$p.value,
@@ -162,10 +166,10 @@ p_vals2 <- c(
   chisq.test(table(df$Diabetes, df$Water_Q))$p.value
 )
 
-# Format
+#format
 p_fmt2 <- sapply(p_vals2, format_p)
 
-# Add to table
+#add to table
 tab2_df <- as.data.frame(tab2_print)
 tab2_df$P <- ""
 var_names2 <- c("Age", "BMI", "Income_PIR", "Energy_kcal", "Sugar_g", "HbA1c",
@@ -175,7 +179,7 @@ for(i in 1:length(var_names2)) {
   if(length(rows) > 0) tab2_df$P[rows[1]] <- p_fmt2[i]
 }
 
-# Display
+#show
 kable(tab2_df, caption = "Table 2: Baseline Characteristics by Water Quartiles") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   footnote(general = c("Continuous variables: Median (IQR), Kruskal-Wallis test",
@@ -186,7 +190,7 @@ write.csv(tab2_df, "Table2.csv")
 
 # Logistic Regression: Diabetes Risk
 ```{r logistic}
-# Three models
+#3 models
 m1 <- glm(Diabetes ~ Water_g, data = df, family = binomial)
 m2 <- glm(Diabetes ~ Water_g + Age + Gender + Race + Education + Income_PIR, 
           data = df, family = binomial)
@@ -194,7 +198,7 @@ m3 <- glm(Diabetes ~ Water_g + Age + Gender + Race + Education + Income_PIR +
             BMI + Smoking + Energy_kcal + Sugar_g, 
           data = df, family = binomial)
 
-# Extract results
+#Extract result
 get_OR <- function(model, name) {
   coef <- summary(model)$coefficients["Water_g", ]
   data.frame(
@@ -212,7 +216,7 @@ or_results <- rbind(
   get_OR(m3, "Fully Adjusted")
 )
 
-# Format and display
+#format and display
 or_results %>%
   mutate(
     `OR (95% CI)` = sprintf("%.4f (%.4f-%.4f)", OR, Lower, Upper),
@@ -222,13 +226,13 @@ or_results %>%
   kable(caption = "Logistic Regression: Association with Diabetes") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
-# Full model output
+#Full model output
 summary(m3)
 ```
 
 # Linear Regression: HbA1c Levels
 ```{r linear}
-# Three models
+#3 models
 lm1 <- lm(HbA1c ~ Water_g, data = df)
 lm2 <- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR, 
           data = df)
@@ -236,7 +240,7 @@ lm3 <- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR +
             BMI + Smoking + Energy_kcal + Sugar_g, 
           data = df)
 
-# Extract results
+#Extract results
 get_Beta <- function(model, name) {
   coef <- summary(model)$coefficients["Water_g", ]
   ci <- confint(model)["Water_g", ]
@@ -255,7 +259,7 @@ beta_results <- rbind(
   get_Beta(lm3, "Fully Adjusted")
 )
 
-# Format and display
+#format and display
 beta_results %>%
   mutate(
     `Beta (95% CI)` = sprintf("%.6f (%.6f, %.6f)", Beta, Lower, Upper),
@@ -265,21 +269,21 @@ beta_results %>%
   kable(caption = "Linear Regression: Association with HbA1c") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
-# Full model output
+#full model output
 summary(lm3)
 ```
 
 # Sensitivity Analysis: Water Quartiles
 ```{r sensitivity}
-# Set reference group
+#Set reference group
 df$Water_Q <- relevel(df$Water_Q, ref = "Q1")
 
-# Logistic regression by quartiles
+#Logistic regression by quartiles
 mQ <- glm(Diabetes ~ Water_Q + Age + Gender + Race + Education + Income_PIR + 
             BMI + Smoking + Energy_kcal + Sugar_g,
           data = df, family = binomial)
 
-# Extract quartile results
+#Extract quartile results
 coef_q <- summary(mQ)$coefficients
 q_vars <- grep("Water_Q", rownames(coef_q), value = TRUE)
 
@@ -291,7 +295,7 @@ q_results <- data.frame(
   P = c(NA, coef_q[q_vars, 4])
 )
 
-# Display
+#show
 q_results %>%
   mutate(
     Quartile = str_replace(Quartile, "Water_Q", ""),
@@ -304,7 +308,7 @@ q_results %>%
   kable(caption = "Diabetes Risk by Water Intake Quartiles (Fully Adjusted)") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
-# Test across quartiles
+#test across quartiles
 cat("\nKruskal-Wallis test (HbA1c by water quartiles):\n")
 kw_test <- kruskal.test(HbA1c ~ Water_Q, data = df)
 print(kw_test)
@@ -316,36 +320,175 @@ print(chi_test)
 
 # Summary
 ```{r summary}
-cat("ANALYSIS SUMMARY\n")
-cat("================\n\n")
+cat("Analysis summary\n")
 cat(sprintf("Sample size: %d\n", nrow(df)))
 cat(sprintf("Diabetes prevalence: %.1f%%\n\n", 100*mean(df$Diabetes == "Yes")))
 
 cat("Main Findings:\n")
-cat(sprintf("- Fully adjusted OR: %.4f (95%% CI: %.4f-%.4f), P=%.3f\n",
+cat(sprintf("Fully adjusted OR: %.4f (95%% CI: %.4f-%.4f), P=%.3f\n",
            or_results$OR[3], or_results$Lower[3], or_results$Upper[3], 
            or_results$P[3]))
-cat(sprintf("- Fully adjusted Beta: %.6f (95%% CI: %.6f-%.6f), P=%.3f\n",
+cat(sprintf("Fully adjusted Beta: %.6f (95%% CI: %.6f-%.6f), P=%.3f\n",
            beta_results$Beta[3], beta_results$Lower[3], beta_results$Upper[3],
            beta_results$P[3]))
 
-cat("\nInterpretation:\n")
-if(or_results$P[3] < 0.05) {
-  cat("- Water intake is significantly associated with diabetes risk (P<0.05).\n")
-} else {
-  cat("- Water intake is NOT significantly associated with diabetes risk (P≥0.05).\n")
-}
-
-if(beta_results$P[3] < 0.05) {
-  cat("- Water intake is significantly associated with HbA1c levels (P<0.05).\n")
-} else {
-  cat("- Water intake is NOT significantly associated with HbA1c levels (P≥0.05).\n")
-}
 ```
 
+# visulizatioin
+```{r visulization}
+#Create figures folder
+dir.create("figures", showWarnings = FALSE)
 
-```{r}
-or_results$P[3]
-beta_results$P[3]
+#Figure 1: Water intake distribution by diabetes status
+p1 <- ggplot(df, aes(x = Water_g, fill = Diabetes)) +
+  geom_density(alpha = 0.4) +
+  scale_fill_manual(values = c("No" = "#2c7bb6", "Yes" = "pink")) +
+  labs(title = "Water Intake Distribution by Diabetes Status",
+       x = "Water Intake (g)", y = "Density", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "top")
+print(p1)
+ggsave("figures/fig1_water_distribution.png", p1, width = 8, height = 6, dpi = 300)
+
+#Figure 2: BMI distribution by water quartiles
+p2 <- ggplot(df, aes(x = Water_Q, y = BMI, fill = Water_Q)) +
+  geom_violin(alpha = 0.7) +
+  geom_boxplot(width = 0.2, fill = "white", outlier.alpha = 0.3) +
+  stat_compare_means(method = "anova") +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "BMI Distribution by Water Intake Quartiles",
+       x = "Water Intake Quartile", y = "BMI (kg/m2)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p2)
+ggsave("figures/fig2_bmi_quartiles.png", p2, width = 8, height = 6, dpi = 300)
+
+#Figure 3: Water intake vs HbA1c by diabetes status
+p3 <- ggplot(df, aes(x = Water_g, y = HbA1c, color = Diabetes, fill = Diabetes)) +
+  geom_point(alpha = 0.3, size = 1.5) +
+  geom_smooth(method = "loess", alpha = 0.2) +
+  scale_color_manual(values = c("No" = "#2c7bb6", "Yes" = "#d7191c")) +
+  scale_fill_manual(values = c("No" = "#2c7bb6", "Yes" = "#d7191c")) +
+  labs(title = "Water Intake vs HbA1c by Diabetes Status",
+       x = "Water Intake (g)", y = "HbA1c (%)", 
+       color = "Diabetes", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "top")
+print(p3)
+ggsave("figures/fig3_water_hba1c.png", p3, width = 8, height = 6, dpi = 300)
+
+#Figure 4: Odds ratio forest plot
+or_result <- broom::tidy(m3, exponentiate = TRUE, conf.int = TRUE) %>%
+  filter(term == "Water_g")
+
+p4 <- ggplot(or_result, aes(x = estimate, y = "Water Intake")) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "gray40") +
+  geom_point(size = 4, color = "#d7191c") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), 
+                 height = 0.1, color = "#d7191c", size = 1) +
+  labs(title = "Odds Ratio for Diabetes (Fully Adjusted)",
+       x = "Odds Ratio (95% CI)", y = "") +
+  theme_minimal()
+print(p4)
+ggsave("figures/fig4_odds_ratio.png", p4, width = 8, height = 4, dpi = 300)
+
+#Figure 5: Beta coefficient plot
+beta_result <- broom::tidy(lm3, conf.int = TRUE) %>%
+  filter(term == "Water_g")
+
+p5 <- ggplot(beta_result, aes(x = estimate, y = "Water Intake")) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray40") +
+  geom_point(size = 4, color = "#2c7bb6") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), 
+                 height = 0.1, color = "#2c7bb6", size = 1) +
+  labs(title = "Beta Coefficient for HbA1c (Fully Adjusted)",
+       x = "Beta Coefficient (95% CI)", y = "") +
+  theme_minimal()
+print(p5)
+ggsave("figures/fig5_beta_coefficient.png", p5, width = 8, height = 4, dpi = 300)
+
+#Figure 6: Diabetes prevalence by quartiles
+trend_dm <- df %>%
+  group_by(Water_Q) %>%
+  summarise(rate = mean(Diabetes == "Yes", na.rm = TRUE),
+            se = sqrt(rate * (1 - rate) / n()))
+
+p6 <- ggplot(trend_dm, aes(x = Water_Q, y = rate, group = 1)) +
+  geom_col(aes(fill = Water_Q), alpha = 0.7, width = 0.6) +
+  geom_errorbar(aes(ymin = rate - 1.96*se, ymax = rate + 1.96*se), 
+                width = 0.2, color = "gray20") +
+  geom_line(color = "#d7191c", size = 1.2) +
+  geom_point(color = "#d7191c", size = 3) +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Diabetes Prevalence by Water Intake Quartiles",
+       x = "Water Intake Quartile", y = "Diabetes Prevalence") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p6)
+ggsave("figures/fig6_diabetes_prevalence.png", p6, width = 8, height = 6, dpi = 300)
+
+#Figure 7: Mean HbA1c by quartiles
+trend_hba1c <- df %>%
+  group_by(Water_Q) %>%
+  summarise(mean = mean(HbA1c, na.rm = TRUE),
+            se = sd(HbA1c, na.rm = TRUE) / sqrt(n()))
+
+p7 <- ggplot(trend_hba1c, aes(x = Water_Q, y = mean, group = 1)) +
+  geom_col(aes(fill = Water_Q), alpha = 0.7, width = 0.6) +
+  geom_errorbar(aes(ymin = mean - 1.96*se, ymax = mean + 1.96*se), 
+                width = 0.2, color = "gray20") +
+  geom_line(color = "#2c7bb6", size = 1.2) +
+  geom_point(color = "#2c7bb6", size = 3) +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "Mean HbA1c by Water Intake Quartiles",
+       x = "Water Intake Quartile", y = "Mean HbA1c (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p7)
+ggsave("figures/fig7_hba1c_mean.png", p7, width = 8, height = 6, dpi = 300)
+
+#Figure 8: Correlation heatmap
+cor_data <- df %>%
+  select(Water_g, Age, BMI, Energy_kcal, Sugar_g, HbA1c) %>%
+  drop_na()
+
+corrplot(cor(cor_data), 
+         method = "color", 
+         type = "upper",
+         addCoef.col = "black", 
+         number.cex = 0.8,
+         tl.col = "black", 
+         tl.srt = 45,
+         col = colorRampPalette(c("#2c7bb6", "white", "pink"))(200))
+
+png("figures/fig8_correlation.png", width = 2400, height = 2400, res = 300)
+corrplot(cor(cor_data), 
+         method = "color", 
+         type = "upper",
+         addCoef.col = "black", 
+         number.cex = 0.8,
+         tl.col = "black", 
+         tl.srt = 45,
+         col = colorRampPalette(c("#2c7bb6", "white", "pink"))(200))
+dev.off()
+
+#Figure 9: Stratified by BMI
+df <- df %>%
+  mutate(BMI_cat = cut(BMI, 
+                       breaks = c(0, 25, 30, Inf),
+                       labels = c("Normal (<25)", "Overweight (25-30)", "Obese (≥30)")))
+
+p9 <- ggplot(df, aes(x = Water_Q, y = HbA1c, fill = Water_Q)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  facet_wrap(~BMI_cat, nrow = 1) +
+  stat_compare_means(method = "anova") +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "Water Intake and HbA1c Stratified by BMI",
+       x = "Water Intake Quartile", y = "HbA1c (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p9)
+ggsave("figures/fig9_stratified_bmi.png", p9, width = 12, height = 5, dpi = 300)
+
 ```
-
