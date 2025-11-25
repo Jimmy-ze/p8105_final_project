@@ -1,0 +1,26 @@
+name: "P8105 Final Project"
+output_dir: "."
+navbar:
+  title: "Home"
+  left:
+    - text: "Overview"
+      href: index.html
+    - text: "Data"
+      href: data.html
+    - text: "Methods"
+      href: methods.html
+    - text: "Results"
+      href: results.html
+    - text: "Report"
+      href: report.html
+    - text: "Screencast"
+      href: screencast.html
+  right:
+    - icon: fa-github
+      href: https://github.com/Jimmy-ze/p8105_final_project
+    - icon: fa-envelope
+      href: ygtomor1@gmail.com
+output:
+  html_document:
+    theme: cosmo
+    toc: false
