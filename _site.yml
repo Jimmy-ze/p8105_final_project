@@ -13,13 +13,11 @@ navbar:
       href: results.html
     - text: "Report"
       href: report.html
-    - text: "Screencast"
-      href: screencast.html
   right:
     - icon: fa-github
       href: https://github.com/Jimmy-ze/p8105_final_project
-    - icon: fa-envelope
-      href: ygtomor1@gmail.com
+    - icon: fa-youtube fa-lg
+      href: awaiting
 output:
   html_document:
     theme: cosmo
