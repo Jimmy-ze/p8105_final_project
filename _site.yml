@@ -11,8 +11,6 @@ navbar:
       href: methods.html
     - text: "Results"
       href: results.html
-    - text: "Report"
-      href: report.html
   right:
     - icon: fa-github
       href: https://github.com/Jimmy-ze/p8105_final_project
