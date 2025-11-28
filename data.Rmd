@@ -93,3 +93,16 @@ the same 24-hour recall.
 
 <span class="var-badge">Sugar_g</span>: Total sugar intake (grams/day) from the 
 same 24-hour recall.
+
+## Data Quality Notes
+
+- We align dietary, lab and exam records by participant ID and recall day, and 
+prefer Day-1 intakes for comparability.
+
+- For categorical fields (e.g., education, race/ethnicity, smoking), we apply 
+factor labels.
+
+- Observations with missing value in data is excluded.
+
+- Sensitivity analyses consider water intake in quantiles (Q1–Q4) to assess 
+potential non-linearity.
