@@ -14,3 +14,10 @@ body {line-height: 1.6;}
 .card i {opacity: .9;}
 .badge {font-size: 0.9rem; padding: .55em .7em;}
 .section {margin: 36px 0 14px;}
+.var-badge{display:inline-block; font-family: ui-monospace, SFMono-Regular, 
+                                              Menlo, Monaco, Consolas, 
+                                              "Liberation Mono", "Courier New", 
+                                              monospace; background:#f5f5f5; 
+           color:#2c3e50; border:1px solid #e0e0e0; border-radius:10px;
+           padding:4px 10px; font-size:1.05em; line-height:1.6; 
+           margin-right:8px;}

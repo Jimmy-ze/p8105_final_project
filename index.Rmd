@@ -2,7 +2,7 @@
 title: "Association Between Water Intake and Diabetes Outcomes in US Adults"
 output: html_document
 ---
-```{r}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.width = 9, fig.height = 5.5, dpi = 150, echo = FALSE)
 ```
 
@@ -50,11 +50,11 @@ on effect sizes and uncertainty.</p>
 
 ## Team
 
-Han Yang – 1
+Han Yang – Exploratory analysis & report
 
-Shiyun Cheng – 2
+Shiyun Cheng – Video & initial question
 
-Xinyi Yao – 3
+Xinyi Yao – Additional analysis & discussion
 
 Yiqun Guo – Website & integration
 
