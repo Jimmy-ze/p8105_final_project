@@ -486,3 +486,218 @@ cat(sprintf("P for trend (Diabetes) = %.4f\n",
 cat(sprintf("P for trend (HbA1c) = %.4f\n",
            summary(lm3_trend)$coefficients["Water_Q_numeric", "Pr(>|t|)"]))
 ```
+
+
+# Visualization
+```{r viz_setup}
+# Create figures folder
+dir.create("figures", showWarnings = FALSE)
+```
+
+# Figure 1: Water intake distribution by diabetes status
+```{r fig1, fig.width=8, fig.height=6}
+p1 <- ggplot(df, aes(x = Water_g, fill = Diabetes)) +
+  geom_density(alpha = 0.4) +
+  scale_fill_manual(values = c("No" = "#2c7bb6", "Yes" = "pink")) +
+  labs(title = "Water Intake Distribution by Diabetes Status",
+       x = "Water Intake (g)", y = "Density", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "top")
+print(p1)
+ggsave("figures/fig1_water_distribution.png", p1, width = 8, height = 6, dpi = 300)
+```
+
+# Figure 2: BMI distribution by water quartiles
+```{r fig2, fig.width=8, fig.height=6}
+p2 <- ggplot(df, aes(x = Water_Q, y = BMI, fill = Water_Q)) +
+  geom_violin(alpha = 0.7) +
+  geom_boxplot(width = 0.2, fill = "white", outlier.alpha = 0.3) +
+  stat_compare_means(method = "anova") +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "BMI Distribution by Water Intake Quartiles",
+       x = "Water Intake Quartile", y = "BMI (kg/m2)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p2)
+ggsave("figures/fig2_bmi_quartiles.png", p2, width = 8, height = 6, dpi = 300)
+```
+
+# Figure 3: Water intake vs HbA1c by diabetes status
+```{r fig3, fig.width=8, fig.height=6}
+p3 <- ggplot(df, aes(x = Water_g, y = HbA1c, color = Diabetes, fill = Diabetes)) +
+  geom_point(alpha = 0.3, size = 1.5) +
+  geom_smooth(method = "loess", alpha = 0.2) +
+  scale_color_manual(values = c("No" = "#2c7bb6", "Yes" = "#d7191c")) +
+  scale_fill_manual(values = c("No" = "#2c7bb6", "Yes" = "#d7191c")) +
+  labs(title = "Water Intake vs HbA1c by Diabetes Status",
+       x = "Water Intake (g)", y = "HbA1c (%)", 
+       color = "Diabetes", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "top")
+print(p3)
+ggsave("figures/fig3_water_hba1c.png", p3, width = 8, height = 6, dpi = 300)
+```
+
+
+# Figure 4: Forest plot - OR by quartiles (FIXED)
+```{r fig4, fig.width=8, fig.height=5}
+# Only keep rows where Quartile is Q2, Q3, Q4 AND belongs to Fully Adjusted model
+or_plot <- or_results %>%
+  mutate(row_id = row_number()) %>%
+  filter(Quartile %in% c("Q2", "Q3", "Q4")) %>%
+  # Find which rows belong to Fully Adjusted section
+  mutate(in_fully_adjusted = FALSE)
+
+# Manually identify Fully Adjusted section
+fully_adj_start <- which(or_results$Model == "Fully Adjusted")
+if(length(fully_adj_start) > 0) {
+  # Get all rows from Fully Adjusted start until next model or end
+  next_model <- which(or_results$Model != "" & or_results$Model != "Fully Adjusted")
+  next_model <- next_model[next_model > fully_adj_start]
+  
+  if(length(next_model) > 0) {
+    fully_adj_end <- next_model[1] - 1
+  } else {
+    fully_adj_end <- nrow(or_results)
+  }
+  
+  or_plot <- or_results %>%
+    slice(fully_adj_start:fully_adj_end) %>%
+    filter(Quartile != "Q1 (Ref)")
+}
+
+# Create plot
+p4 <- ggplot(or_plot, aes(x = OR, y = factor(Quartile, levels = c("Q4", "Q3", "Q2")))) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "gray40") +
+  geom_point(size = 4, color = "#d7191c") +
+  geom_errorbarh(aes(xmin = Lower, xmax = Upper), 
+                 height = 0.2, color = "#d7191c", linewidth = 1) +
+  labs(title = "Odds Ratio for Diabetes by Water Quartiles (Fully Adjusted)",
+       x = "Odds Ratio (95% CI)", y = "Water Intake Quartile") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+print(p4)
+ggsave("figures/fig4_odds_ratio.png", p4, width = 8, height = 5, dpi = 300)
+```
+
+# Figure 5: Forest plot - Beta by quartiles (FIXED)
+```{r fig5, fig.width=8, fig.height=5}
+# Same logic for beta
+fully_adj_start <- which(beta_results$Model == "Fully Adjusted")
+if(length(fully_adj_start) > 0) {
+  next_model <- which(beta_results$Model != "" & beta_results$Model != "Fully Adjusted")
+  next_model <- next_model[next_model > fully_adj_start]
+  
+  if(length(next_model) > 0) {
+    fully_adj_end <- next_model[1] - 1
+  } else {
+    fully_adj_end <- nrow(beta_results)
+  }
+  
+  beta_plot <- beta_results %>%
+    slice(fully_adj_start:fully_adj_end) %>%
+    filter(Quartile != "Q1 (Ref)")
+}
+
+# Create plot
+p5 <- ggplot(beta_plot, aes(x = Beta, y = factor(Quartile, levels = c("Q4", "Q3", "Q2")))) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray40") +
+  geom_point(size = 4, color = "#2c7bb6") +
+  geom_errorbarh(aes(xmin = Lower, xmax = Upper), 
+                 height = 0.2, color = "#2c7bb6", linewidth = 1) +
+  labs(title = "Beta Coefficient for HbA1c by Water Quartiles (Fully Adjusted)",
+       x = "Beta Coefficient (95% CI)", y = "Water Intake Quartile") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11))
+print(p5)
+ggsave("figures/fig5_beta_coefficient.png", p5, width = 8, height = 5, dpi = 300)
+```
+
+
+
+
+
+# Figure 7: Mean HbA1c by quartiles
+```{r fig7, fig.width=8, fig.height=6}
+# Prepare data
+trend_hba1c <- df %>%
+  group_by(Water_Q) %>%
+  summarise(
+    mean = mean(HbA1c, na.rm = TRUE),
+    sd = sd(HbA1c, na.rm = TRUE),
+    n = n(),
+    .groups = 'drop'
+  ) %>%
+  mutate(se = sd / sqrt(n))
+
+# Create plot
+p7 <- ggplot(trend_hba1c, aes(x = Water_Q, y = mean, group = 1)) +
+  geom_col(aes(fill = Water_Q), alpha = 0.7, width = 0.6) +
+  geom_errorbar(aes(ymin = mean - 1.96*se, ymax = mean + 1.96*se), 
+                width = 0.2, color = "gray20") +
+  geom_line(color = "#2c7bb6", linewidth = 1.2) +
+  geom_point(color = "#2c7bb6", size = 3) +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "Mean HbA1c by Water Intake Quartiles",
+       x = "Water Intake Quartile", y = "Mean HbA1c (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p7)
+ggsave("figures/fig7_hba1c_mean.png", p7, width = 8, height = 6, dpi = 300)
+```
+
+# Figure 8: Correlation heatmap
+```{r fig8, fig.width=8, fig.height=8}
+# Prepare data
+cor_data <- df %>%
+  select(Water_g, Age, BMI, Energy_kcal, Sugar_g, HbA1c) %>%
+  drop_na()
+
+# Create and save plot
+png("figures/fig8_correlation.png", width = 2400, height = 2400, res = 300)
+corrplot(cor(cor_data), 
+         method = "color", 
+         type = "upper",
+         addCoef.col = "black", 
+         number.cex = 0.8,
+         tl.col = "black", 
+         tl.srt = 45,
+         col = colorRampPalette(c("#2c7bb6", "white", "pink"))(200))
+dev.off()
+
+# Display in notebook
+corrplot(cor(cor_data), 
+         method = "color", 
+         type = "upper",
+         addCoef.col = "black", 
+         number.cex = 0.8,
+         tl.col = "black", 
+         tl.srt = 45,
+         col = colorRampPalette(c("#2c7bb6", "white", "pink"))(200))
+```
+
+# Figure 9: Stratified by BMI
+```{r fig9, fig.width=12, fig.height=5}
+# Prepare data
+df_plot <- df %>%
+  mutate(BMI_cat = cut(BMI, 
+                       breaks = c(0, 25, 30, Inf),
+                       labels = c("Normal (<25)", "Overweight (25-30)", "Obese (≥30)"))) %>%
+  filter(!is.na(BMI_cat))
+
+# Create plot
+p9 <- ggplot(df_plot, aes(x = Water_Q, y = HbA1c, fill = Water_Q)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  facet_wrap(~BMI_cat, nrow = 1) +
+  stat_compare_means(method = "anova") +
+  scale_fill_manual(values = c("#d7191c", "#fdae61", "#abd9e9", "#2c7bb6")) +
+  labs(title = "Water Intake and HbA1c Stratified by BMI",
+       x = "Water Intake Quartile", y = "HbA1c (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+print(p9)
+ggsave("figures/fig9_stratified_bmi.png", p9, width = 12, height = 5, dpi = 300)
+```
+
+
+
