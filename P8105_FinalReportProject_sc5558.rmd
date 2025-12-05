@@ -6,8 +6,6 @@ output: github_document
 ---
 
 
-## R Markdown
-
 Introduction: 
 Type 2 diabetes (T2D) remains one of the most prevalent chronic diseases in the United States. Its development and progression are closely tied to lifestyle and dietary behaviors. While many studies focus on complex dietary patterns, macronutrient composition, or sugar intake, far less attention is paid to one of the simplest daily behaviors: water consumption. Water intake is easy to modify, low-cost, and universally available, yet systematic research on its association with diabetes outcomes is limited. 
 
