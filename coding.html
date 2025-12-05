@@ -1376,7 +1376,8 @@ Yes
 </table>
 <pre class="r"><code>write.csv(tab2_df, &quot;Table2.csv&quot;)</code></pre>
 </div>
-<div id="logistic-regression-diabetes-risk-by-water-quartiles" class="section level1">
+<div id="logistic-regression-diabetes-risk-by-water-quartiles"
+class="section level1">
 <h1>Logistic Regression: Diabetes Risk by Water Quartiles</h1>
 <pre class="r"><code>#3 models with water quartiles
 m1 &lt;- glm(Diabetes ~ Water_Q, data = df, family = binomial)
@@ -1465,285 +1466,8 @@ or_results &lt;- rbind(or_m1, or_m2, or_m3)
 #Display table
 or_results %&gt;%
   mutate(
-<<<<<<< HEAD
     `OR (95% CI)` = ifelse(is.na(Lower), 
                            &quot;1.00 (Ref)&quot;, 
-=======
-    `OR (95% CI)` = sprintf(&quot;%.4f (%.4f-%.4f)&quot;, OR, Lower, Upper),
-    P = ifelse(P &lt; 0.001, &quot;&lt;0.001&quot;, sprintf(&quot;%.3f&quot;, P))
-  ) %&gt;%
-  select(Model, `OR (95% CI)`, P) %&gt;%
-  kable(caption = &quot;Logistic Regression: Association with Diabetes&quot;) %&gt;%
-  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
-<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption>
-Logistic Regression: Association with Diabetes
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-Model
-</th>
-<th style="text-align:left;">
-OR (95% CI)
-</th>
-<th style="text-align:left;">
-P
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Estimate
-</td>
-<td style="text-align:left;">
-Unadjusted
-</td>
-<td style="text-align:left;">
-1.0000 (0.9999-1.0000)
-</td>
-<td style="text-align:left;">
-0.198
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estimate1
-</td>
-<td style="text-align:left;">
-Adjusted: Demographics
-</td>
-<td style="text-align:left;">
-1.0001 (1.0000-1.0002)
-</td>
-<td style="text-align:left;">
-0.004
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estimate2
-</td>
-<td style="text-align:left;">
-Fully Adjusted
-</td>
-<td style="text-align:left;">
-1.0001 (1.0000-1.0002)
-</td>
-<td style="text-align:left;">
-0.002
-</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>#Full model output
-summary(m3)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = Diabetes ~ Water_g + Age + Gender + Race + Education + 
-##     Income_PIR + BMI + Smoking + Energy_kcal + Sugar_g, family = binomial, 
-##     data = df)
-## 
-## Coefficients:
-##                            Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)              -6.358e+00  4.685e-01 -13.573  &lt; 2e-16 ***
-## Water_g                   1.100e-04  3.617e-05   3.041 0.002361 ** 
-## Age                       4.988e-02  4.166e-03  11.975  &lt; 2e-16 ***
-## GenderMale                3.210e-01  1.127e-01   2.848 0.004400 ** 
-## RaceOther Hispanic       -6.405e-02  2.341e-01  -0.274 0.784386    
-## RaceNon-Hispanic White   -5.395e-01  2.067e-01  -2.610 0.009061 ** 
-## RaceNon-Hispanic Black    7.489e-02  2.307e-01   0.325 0.745511    
-## Education9-11th grade     1.478e-01  2.659e-01   0.556 0.578414    
-## EducationHigh school/GED -3.143e-01  2.469e-01  -1.273 0.202950    
-## EducationSome college    -3.939e-01  2.470e-01  -1.594 0.110870    
-## EducationCollege grad+   -8.814e-01  2.638e-01  -3.341 0.000836 ***
-## Income_PIR               -1.273e-01  3.863e-02  -3.295 0.000983 ***
-## BMI                       7.810e-02  6.896e-03  11.325  &lt; 2e-16 ***
-## SmokingYes                1.489e-01  1.091e-01   1.364 0.172527    
-## Energy_kcal               1.177e-04  8.020e-05   1.468 0.142102    
-## Sugar_g                  -4.407e-03  1.117e-03  -3.944 8.01e-05 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 2856.6  on 3476  degrees of freedom
-## Residual deviance: 2429.4  on 3461  degrees of freedom
-##   (因为不存在，408个观察量被删除了)
-## AIC: 2461.4
-## 
-## Number of Fisher Scoring iterations: 5</code></pre>
-</div>
-<div id="linear-regression-hba1c-levels" class="section level1">
-<h1>Linear Regression: HbA1c Levels</h1>
-<pre class="r"><code>#3 models
-lm1 &lt;- lm(HbA1c ~ Water_g, data = df)
-lm2 &lt;- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR, 
-          data = df)
-lm3 &lt;- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR + 
-            BMI + Smoking + Energy_kcal + Sugar_g, 
-          data = df)
-
-#Extract results
-get_Beta &lt;- function(model, name) {
-  coef &lt;- summary(model)$coefficients[&quot;Water_g&quot;, ]
-  ci &lt;- confint(model)[&quot;Water_g&quot;, ]
-  data.frame(
-    Model = name,
-    Beta = coef[1],
-    Lower = ci[1],
-    Upper = ci[2],
-    P = coef[4]
-  )
-}
-
-beta_results &lt;- rbind(
-  get_Beta(lm1, &quot;Unadjusted&quot;),
-  get_Beta(lm2, &quot;Adjusted: Demographics&quot;),
-  get_Beta(lm3, &quot;Fully Adjusted&quot;)
-)
-
-#format and display
-beta_results %&gt;%
-  mutate(
-    `Beta (95% CI)` = sprintf(&quot;%.6f (%.6f, %.6f)&quot;, Beta, Lower, Upper),
-    P = ifelse(P &lt; 0.001, &quot;&lt;0.001&quot;, sprintf(&quot;%.3f&quot;, P))
-  ) %&gt;%
-  select(Model, `Beta (95% CI)`, P) %&gt;%
-  kable(caption = &quot;Linear Regression: Association with HbA1c&quot;) %&gt;%
-  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
-<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption>
-Linear Regression: Association with HbA1c
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-Model
-</th>
-<th style="text-align:left;">
-Beta (95% CI)
-</th>
-<th style="text-align:left;">
-P
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Estimate
-</td>
-<td style="text-align:left;">
-Unadjusted
-</td>
-<td style="text-align:left;">
--0.000020 (-0.000044, 0.000003)
-</td>
-<td style="text-align:left;">
-0.092
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estimate1
-</td>
-<td style="text-align:left;">
-Adjusted: Demographics
-</td>
-<td style="text-align:left;">
-0.000044 (0.000020, 0.000068)
-</td>
-<td style="text-align:left;">
-&lt;0.001
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Estimate2
-</td>
-<td style="text-align:left;">
-Fully Adjusted
-</td>
-<td style="text-align:left;">
-0.000042 (0.000017, 0.000067)
-</td>
-<td style="text-align:left;">
-0.001
-</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>#full model output
-summary(lm3)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = HbA1c ~ Water_g + Age + Gender + Race + Education + 
-##     Income_PIR + BMI + Smoking + Energy_kcal + Sugar_g, data = df)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -2.7854 -0.4509 -0.1599  0.1395 11.2274 
-## 
-## Coefficients:
-##                            Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)               4.599e+00  1.487e-01  30.917  &lt; 2e-16 ***
-## Water_g                   4.187e-05  1.276e-05   3.282  0.00104 ** 
-## Age                       1.678e-02  1.095e-03  15.322  &lt; 2e-16 ***
-## GenderMale                6.497e-02  3.695e-02   1.758  0.07875 .  
-## RaceOther Hispanic       -1.950e-01  8.447e-02  -2.309  0.02099 *  
-## RaceNon-Hispanic White   -3.628e-01  7.274e-02  -4.988 6.41e-07 ***
-## RaceNon-Hispanic Black   -9.309e-02  8.420e-02  -1.105  0.26903    
-## Education9-11th grade     7.774e-02  1.145e-01   0.679  0.49730    
-## EducationHigh school/GED -2.090e-01  1.027e-01  -2.036  0.04183 *  
-## EducationSome college    -3.141e-01  1.017e-01  -3.090  0.00202 ** 
-## EducationCollege grad+   -4.566e-01  1.049e-01  -4.351 1.39e-05 ***
-## Income_PIR               -3.888e-02  1.267e-02  -3.069  0.00216 ** 
-## BMI                       2.714e-02  2.387e-03  11.369  &lt; 2e-16 ***
-## SmokingYes                4.514e-02  3.662e-02   1.233  0.21777    
-## Energy_kcal               2.105e-05  2.672e-05   0.788  0.43094    
-## Sugar_g                  -7.360e-04  3.282e-04  -2.243  0.02497 *  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 1.006 on 3461 degrees of freedom
-##   (因为不存在，408个观察量被删除了)
-## Multiple R-squared:  0.1511, Adjusted R-squared:  0.1475 
-## F-statistic: 41.09 on 15 and 3461 DF,  p-value: &lt; 2.2e-16</code></pre>
-</div>
-<div id="sensitivity-analysis-water-quartiles" class="section level1">
-<h1>Sensitivity Analysis: Water Quartiles</h1>
-<pre class="r"><code>#Set reference group
-df$Water_Q &lt;- relevel(df$Water_Q, ref = &quot;Q1&quot;)
-
-#Logistic regression by quartiles
-mQ &lt;- glm(Diabetes ~ Water_Q + Age + Gender + Race + Education + Income_PIR + 
-            BMI + Smoking + Energy_kcal + Sugar_g,
-          data = df, family = binomial)
-
-#Extract quartile results
-coef_q &lt;- summary(mQ)$coefficients
-q_vars &lt;- grep(&quot;Water_Q&quot;, rownames(coef_q), value = TRUE)
-
-q_results &lt;- data.frame(
-  Quartile = c(&quot;Q1 (Ref)&quot;, q_vars),
-  OR = c(1, exp(coef_q[q_vars, 1])),
-  Lower = c(NA, exp(coef_q[q_vars, 1] - 1.96*coef_q[q_vars, 2])),
-  Upper = c(NA, exp(coef_q[q_vars, 1] + 1.96*coef_q[q_vars, 2])),
-  P = c(NA, coef_q[q_vars, 4])
-)
-
-#show
-q_results %&gt;%
-  mutate(
-    Quartile = str_replace(Quartile, &quot;Water_Q&quot;, &quot;&quot;),
-    `OR (95% CI)` = ifelse(is.na(OR), &quot;1.00 (Ref)&quot;, 
->>>>>>> 27f28a47eddebd0f2b59acc431cb47512efbce46
                            sprintf(&quot;%.3f (%.3f-%.3f)&quot;, OR, Lower, Upper)),
     P = ifelse(is.na(P), &quot;-&quot;, 
               ifelse(P &lt; 0.001, &quot;&lt;0.001&quot;, sprintf(&quot;%.3f&quot;, P))),
@@ -2018,12 +1742,13 @@ summary(m3)</code></pre>
 ## 
 ##     Null deviance: 2856.6  on 3476  degrees of freedom
 ## Residual deviance: 2429.4  on 3459  degrees of freedom
-##   (408 observations deleted due to missingness)
+##   (因为不存在，408个观察量被删除了)
 ## AIC: 2465.4
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div id="linear-regression-hba1c-by-water-quartiles" class="section level1">
+<div id="linear-regression-hba1c-by-water-quartiles"
+class="section level1">
 <h1>Linear Regression: HbA1c by Water Quartiles</h1>
 <pre class="r"><code>#3 models with water quartiles
 lm1 &lt;- lm(HbA1c ~ Water_Q, data = df)
@@ -2392,11 +2117,12 @@ cat(&quot;\n=== Fully Adjusted Model Summary ===\n&quot;)</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 1.007 on 3459 degrees of freedom
-##   (408 observations deleted due to missingness)
+##   (因为不存在，408个观察量被删除了)
 ## Multiple R-squared:  0.1495, Adjusted R-squared:  0.1453 
 ## F-statistic: 35.76 on 17 and 3459 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div id="sensitivity-analysis-continuous-water-variable" class="section level1">
+<div id="sensitivity-analysis-continuous-water-variable"
+class="section level1">
 <h1>Sensitivity Analysis: Continuous Water Variable</h1>
 <pre class="r"><code>#Logistic regression
 m_cont &lt;- glm(Diabetes ~ Water_g + Age + Gender + Race + Education + Income_PIR + 
@@ -2520,7 +2246,6 @@ q4_or &lt;- or_results %&gt;% filter(Model == &quot;Fully Adjusted&quot;, Quarti
 cat(sprintf(&quot;Q4 vs Q1 OR = %.3f (95%% CI: %.3f-%.3f), P = %.3f\n&quot;,
            q4_or$OR, q4_or$Lower, q4_or$Upper, q4_or$P))
 
-<<<<<<< HEAD
 q4_beta &lt;- beta_results %&gt;% filter(Model == &quot;Fully Adjusted&quot;, Quartile == &quot;Q4&quot;)
 cat(sprintf(&quot;Q4 vs Q1 Beta = %.4f (95%% CI: %.4f to %.4f), P = %.3f\n\n&quot;,
            q4_beta$Beta, q4_beta$Lower, q4_beta$Upper, q4_beta$P))
@@ -2532,168 +2257,6 @@ cat(sprintf(&quot;P for trend (Diabetes) = %.4f\n&quot;,
 <pre class="r"><code>cat(sprintf(&quot;P for trend (HbA1c) = %.4f\n&quot;,
            summary(lm3_trend)$coefficients[&quot;Water_Q_numeric&quot;, &quot;Pr(&gt;|t|)&quot;]))</code></pre>
 <pre><code>## P for trend (HbA1c) = 0.0562</code></pre>
-=======
-#Figure 1: Water intake distribution by diabetes status
-p1 &lt;- ggplot(df, aes(x = Water_g, fill = Diabetes)) +
-  geom_density(alpha = 0.4) +
-  scale_fill_manual(values = c(&quot;No&quot; = &quot;#2c7bb6&quot;, &quot;Yes&quot; = &quot;pink&quot;)) +
-  labs(title = &quot;Water Intake Distribution by Diabetes Status&quot;,
-       x = &quot;Water Intake (g)&quot;, y = &quot;Density&quot;, fill = &quot;Diabetes&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;top&quot;)
-print(p1)</code></pre>
-<p><img src="coding_files/figure-html/visulization-1.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig1_water_distribution.png&quot;, p1, width = 8, height = 6, dpi = 300)
-
-#Figure 2: BMI distribution by water quartiles
-p2 &lt;- ggplot(df, aes(x = Water_Q, y = BMI, fill = Water_Q)) +
-  geom_violin(alpha = 0.7) +
-  geom_boxplot(width = 0.2, fill = &quot;white&quot;, outlier.alpha = 0.3) +
-  stat_compare_means(method = &quot;anova&quot;) +
-  scale_fill_manual(values = c(&quot;#d7191c&quot;, &quot;#fdae61&quot;, &quot;#abd9e9&quot;, &quot;#2c7bb6&quot;)) +
-  labs(title = &quot;BMI Distribution by Water Intake Quartiles&quot;,
-       x = &quot;Water Intake Quartile&quot;, y = &quot;BMI (kg/m2)&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;none&quot;)
-print(p2)</code></pre>
-<p><img src="coding_files/figure-html/visulization-2.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig2_bmi_quartiles.png&quot;, p2, width = 8, height = 6, dpi = 300)
-
-#Figure 3: Water intake vs HbA1c by diabetes status
-p3 &lt;- ggplot(df, aes(x = Water_g, y = HbA1c, color = Diabetes, fill = Diabetes)) +
-  geom_point(alpha = 0.3, size = 1.5) +
-  geom_smooth(method = &quot;loess&quot;, alpha = 0.2) +
-  scale_color_manual(values = c(&quot;No&quot; = &quot;#2c7bb6&quot;, &quot;Yes&quot; = &quot;#d7191c&quot;)) +
-  scale_fill_manual(values = c(&quot;No&quot; = &quot;#2c7bb6&quot;, &quot;Yes&quot; = &quot;#d7191c&quot;)) +
-  labs(title = &quot;Water Intake vs HbA1c by Diabetes Status&quot;,
-       x = &quot;Water Intake (g)&quot;, y = &quot;HbA1c (%)&quot;, 
-       color = &quot;Diabetes&quot;, fill = &quot;Diabetes&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;top&quot;)
-print(p3)</code></pre>
-<p><img src="coding_files/figure-html/visulization-3.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig3_water_hba1c.png&quot;, p3, width = 8, height = 6, dpi = 300)
-
-#Figure 4: Odds ratio forest plot
-or_result &lt;- broom::tidy(m3, exponentiate = TRUE, conf.int = TRUE) %&gt;%
-  filter(term == &quot;Water_g&quot;)
-
-p4 &lt;- ggplot(or_result, aes(x = estimate, y = &quot;Water Intake&quot;)) +
-  geom_vline(xintercept = 1, linetype = &quot;dashed&quot;, color = &quot;gray40&quot;) +
-  geom_point(size = 4, color = &quot;#d7191c&quot;) +
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), 
-                 height = 0.1, color = &quot;#d7191c&quot;, size = 1) +
-  labs(title = &quot;Odds Ratio for Diabetes (Fully Adjusted)&quot;,
-       x = &quot;Odds Ratio (95% CI)&quot;, y = &quot;&quot;) +
-  theme_minimal()
-print(p4)</code></pre>
-<p><img src="coding_files/figure-html/visulization-4.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig4_odds_ratio.png&quot;, p4, width = 8, height = 4, dpi = 300)
-
-#Figure 5: Beta coefficient plot
-beta_result &lt;- broom::tidy(lm3, conf.int = TRUE) %&gt;%
-  filter(term == &quot;Water_g&quot;)
-
-p5 &lt;- ggplot(beta_result, aes(x = estimate, y = &quot;Water Intake&quot;)) +
-  geom_vline(xintercept = 0, linetype = &quot;dashed&quot;, color = &quot;gray40&quot;) +
-  geom_point(size = 4, color = &quot;#2c7bb6&quot;) +
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), 
-                 height = 0.1, color = &quot;#2c7bb6&quot;, size = 1) +
-  labs(title = &quot;Beta Coefficient for HbA1c (Fully Adjusted)&quot;,
-       x = &quot;Beta Coefficient (95% CI)&quot;, y = &quot;&quot;) +
-  theme_minimal()
-print(p5)</code></pre>
-<p><img src="coding_files/figure-html/visulization-5.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig5_beta_coefficient.png&quot;, p5, width = 8, height = 4, dpi = 300)
-
-#Figure 6: Diabetes prevalence by quartiles
-trend_dm &lt;- df %&gt;%
-  group_by(Water_Q) %&gt;%
-  summarise(rate = mean(Diabetes == &quot;Yes&quot;, na.rm = TRUE),
-            se = sqrt(rate * (1 - rate) / n()))
-
-p6 &lt;- ggplot(trend_dm, aes(x = Water_Q, y = rate, group = 1)) +
-  geom_col(aes(fill = Water_Q), alpha = 0.7, width = 0.6) +
-  geom_errorbar(aes(ymin = rate - 1.96*se, ymax = rate + 1.96*se), 
-                width = 0.2, color = &quot;gray20&quot;) +
-  geom_line(color = &quot;#d7191c&quot;, size = 1.2) +
-  geom_point(color = &quot;#d7191c&quot;, size = 3) +
-  scale_fill_manual(values = c(&quot;#d7191c&quot;, &quot;#fdae61&quot;, &quot;#abd9e9&quot;, &quot;#2c7bb6&quot;)) +
-  scale_y_continuous(labels = scales::percent) +
-  labs(title = &quot;Diabetes Prevalence by Water Intake Quartiles&quot;,
-       x = &quot;Water Intake Quartile&quot;, y = &quot;Diabetes Prevalence&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;none&quot;)
-print(p6)</code></pre>
-<p><img src="coding_files/figure-html/visulization-6.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig6_diabetes_prevalence.png&quot;, p6, width = 8, height = 6, dpi = 300)
-
-#Figure 7: Mean HbA1c by quartiles
-trend_hba1c &lt;- df %&gt;%
-  group_by(Water_Q) %&gt;%
-  summarise(mean = mean(HbA1c, na.rm = TRUE),
-            se = sd(HbA1c, na.rm = TRUE) / sqrt(n()))
-
-p7 &lt;- ggplot(trend_hba1c, aes(x = Water_Q, y = mean, group = 1)) +
-  geom_col(aes(fill = Water_Q), alpha = 0.7, width = 0.6) +
-  geom_errorbar(aes(ymin = mean - 1.96*se, ymax = mean + 1.96*se), 
-                width = 0.2, color = &quot;gray20&quot;) +
-  geom_line(color = &quot;#2c7bb6&quot;, size = 1.2) +
-  geom_point(color = &quot;#2c7bb6&quot;, size = 3) +
-  scale_fill_manual(values = c(&quot;#d7191c&quot;, &quot;#fdae61&quot;, &quot;#abd9e9&quot;, &quot;#2c7bb6&quot;)) +
-  labs(title = &quot;Mean HbA1c by Water Intake Quartiles&quot;,
-       x = &quot;Water Intake Quartile&quot;, y = &quot;Mean HbA1c (%)&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;none&quot;)
-print(p7)</code></pre>
-<p><img src="coding_files/figure-html/visulization-7.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig7_hba1c_mean.png&quot;, p7, width = 8, height = 6, dpi = 300)
-
-#Figure 8: Correlation heatmap
-cor_data &lt;- df %&gt;%
-  select(Water_g, Age, BMI, Energy_kcal, Sugar_g, HbA1c) %&gt;%
-  drop_na()
-
-corrplot(cor(cor_data), 
-         method = &quot;color&quot;, 
-         type = &quot;upper&quot;,
-         addCoef.col = &quot;black&quot;, 
-         number.cex = 0.8,
-         tl.col = &quot;black&quot;, 
-         tl.srt = 45,
-         col = colorRampPalette(c(&quot;#2c7bb6&quot;, &quot;white&quot;, &quot;pink&quot;))(200))</code></pre>
-<p><img src="coding_files/figure-html/visulization-8.png" width="672" /></p>
-<pre class="r"><code>png(&quot;figures/fig8_correlation.png&quot;, width = 2400, height = 2400, res = 300)
-corrplot(cor(cor_data), 
-         method = &quot;color&quot;, 
-         type = &quot;upper&quot;,
-         addCoef.col = &quot;black&quot;, 
-         number.cex = 0.8,
-         tl.col = &quot;black&quot;, 
-         tl.srt = 45,
-         col = colorRampPalette(c(&quot;#2c7bb6&quot;, &quot;white&quot;, &quot;pink&quot;))(200))
-dev.off()</code></pre>
-<pre><code>## png 
-##   2</code></pre>
-<pre class="r"><code>#Figure 9: Stratified by BMI
-df &lt;- df %&gt;%
-  mutate(BMI_cat = cut(BMI, 
-                       breaks = c(0, 25, 30, Inf),
-                       labels = c(&quot;Normal (&lt;25)&quot;, &quot;Overweight (25-30)&quot;, &quot;Obese (≥30)&quot;)))
-
-p9 &lt;- ggplot(df, aes(x = Water_Q, y = HbA1c, fill = Water_Q)) +
-  geom_boxplot(outlier.alpha = 0.3) +
-  facet_wrap(~BMI_cat, nrow = 1) +
-  stat_compare_means(method = &quot;anova&quot;) +
-  scale_fill_manual(values = c(&quot;#d7191c&quot;, &quot;#fdae61&quot;, &quot;#abd9e9&quot;, &quot;#2c7bb6&quot;)) +
-  labs(title = &quot;Water Intake and HbA1c Stratified by BMI&quot;,
-       x = &quot;Water Intake Quartile&quot;, y = &quot;HbA1c (%)&quot;) +
-  theme_minimal() +
-  theme(legend.position = &quot;none&quot;)
-print(p9)</code></pre>
-<p><img src="coding_files/figure-html/visulization-9.png" width="672" /></p>
-<pre class="r"><code>ggsave(&quot;figures/fig9_stratified_bmi.png&quot;, p9, width = 12, height = 5, dpi = 300)</code></pre>
->>>>>>> 27f28a47eddebd0f2b59acc431cb47512efbce46
 </div>
 
 
