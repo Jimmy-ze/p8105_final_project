@@ -11,6 +11,8 @@ navbar:
       href: methods.html
     - text: "Results"
       href: results.html
+    - text: "Coding"
+      href: coding_final.html
     - text: "Report"
       href: report.html
   right:
