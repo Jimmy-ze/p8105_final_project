@@ -1,0 +1,41 @@
+---
+title: "P8105_FinalProjectReport_sc5558"
+author: "Shiyun Angel Cheng"
+date: "2025-12-05"
+output: github_document
+---
+
+
+## R Markdown
+
+Introduction: 
+Type 2 diabetes (T2D) remains one of the most prevalent chronic diseases in the United States. Its development and progression are closely tied to lifestyle and dietary behaviors. While many studies focus on complex dietary patterns, macronutrient composition, or sugar intake, far less attention is paid to one of the simplest daily behaviors: water consumption. Water intake is easy to modify, low-cost, and universally available, yet systematic research on its association with diabetes outcomes is limited. 
+This project examines whether total daily water intake is associated with diabetes status and long-term glycemic control among U.S. adults. Using nationally representative data from the 2021–2023 National Health and Nutrition Examination Survey (NHANES), we combine self-reported dietary intake with clinical biomarkers to evaluate cross-sectional patterns in the relationship between hydration and diabetes-related outcomes. Our goal is to provide clear, data-driven evidence on whether water intake is meaningfully correlated with diabetes risk or glycemic levels, after adjusting for sociodemographic, lifestyle, and dietary factors.
+The project uses the full data science workflow required for this course: data cleaning, exploratory analysis, visualization, multivariable modeling, and interpretation. Our final deliverables include a written report, an online project webpage, an analysis repository, and a short presentation video.
+Water intake plays a central role in metabolic regulation, kidney function, and overall health. Despite these physiological links, research on hydration and chronic disease outcomes—especially diabetes—remains sparse. Existing studies tend to emphasize high-sugar beverages, total energy intake, or complex dietary patterns, leaving basic water consumption understudied. Because water is accessible and modifiable, understanding its potential relationship with diabetes outcomes could have important public health implications.
+We focus on two outcomes that reflect different aspects of diabetes burden:
+(1) Diabetes status, a binary indicator of doctor-diagnosed Type 2 diabetes, and
+(2) HbA1c, an objective laboratory biomarker representing average blood glucose levels over several months.
+By examining both, we can study not only disease presence but also metabolic control among individuals at varying levels of water intake.
+NHANES provides high-quality, nationally representative data that include detailed dietary recalls, clinical laboratory measures, and sociodemographic information. This allows us to adjust for key confounders such as age, race/ethnicity, BMI, smoking history, income, and total energy intake.
+
+Related work: 
+Our project builds on prior epidemiological research examining lifestyle factors and chronic disease outcomes. Existing studies consistently show strong association between sugary beverage intake and Type 2 diabetes, but far fewer investigate the role of plain water consumption. An NIH Scientific review highlights potential biological pathways linking hydration status to glucose regulation, suggesting that hydration may influence long-term metabolic health. We were also guided by analytical approaches frequently used in nutrition and chronic disease research, including the use of NHANES for cross-sectional inference, stratified analysis, and regression-based modeling. 
+
+Initial questions: 
+Our project is motivated by a simple question with real-world relevance: 
+
+Do adults who consume more water show better diabetes outcomes?
+
+If this association exists, it may support future research on hydration guidance as a cost-effective behavior for chronic disease prevention.
+
+
+
+
+
+
+
+
+
+
+
