@@ -11,10 +11,37 @@ key variables were removed using na.omit(). Third, the categorical variables are
 recoded:
 
 <span class="var-badge">Gender</span>: 1 = Male, 0 = Female
-Smoking: 1 = Smoked ≥100 cigarettes, 0 = Never smoked
-Diabetes: 1 = Diagnosed, 0 = Not diagnosed
-Race: 1 = Mexican American, 2= Other Hispanic, 3= Non-Hispanic White 4=Non-Hispanic Black
-Education: scale 1-5, from “<9th grade” to “College graduate or above.”
-Water: Q1 corresponds to participants in the lowest 25% of daily water intake (lowest hydration
-group), Q2 and Q3 represent the middle 50% of water consumers, and Q4 corresponds to the
-highest 25% of daily water intake (highest hydration group).
+
+<span class="var-badge">Smoking</span>: 1 = Smoked ≥100 cigarettes, 0 = Never 
+smoked
+
+<span class="var-badge">Diabetes</span>: 1 = Diagnosed, 0 = Not diagnosed
+
+<span class="var-badge">Race</span>: 1 = Mexican American, 2 = Other Hispanic, 3 
+= Non-Hispanic White 4=Non-Hispanic Black
+
+<span class="var-badge">Education</span>: scale 1-5, from “<9th grade” to 
+“College graduate or above.”
+
+<span class="var-badge">Water_Q</span>: Q1 corresponds to participants in the 
+lowest 25% of daily water intake (lowest hydration group), Q2 and Q3 represent 
+the middle 50% of water consumers, and Q4 corresponds to the highest 25% of 
+daily water intake (highest hydration group).
+
+## Exploratory Analysis
+
+We examined the distribution of water consumption across diabetes groups, 
+assessed potential confounders, and visualized early associations between 
+hydration and metabolic health. The overall process include discovering overall 
+trend, model examination, sensitivity analysis and stratified visual checks.
+
+## Primary Models
+
+To model diabetes status, we fit a sequence of logistic regression models with 
+water quartiles as the main exposure:
+![](images/md1.png)  
+
+## Sensitivity Analysis
+
+To check robustness, we reanalyzed water as a continuous variable:
+![](images/md2.png)

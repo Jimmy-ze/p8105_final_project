@@ -2137,41 +2137,42 @@ lm_cont &lt;- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR 
                 BMI + Smoking + Energy_kcal + Sugar_g, 
               data = df)
 
-#Extract results (per 100g increase)
-coef_log &lt;- summary(m_cont)$coefficients[&quot;Water_g&quot;, ]
-coef_lm &lt;- summary(lm_cont)$coefficients[&quot;Water_g&quot;, ]
+#Extract coefficients
+coef_log &lt;- coef(summary(m_cont))[&quot;Water_g&quot;, ]
+coef_lm &lt;- coef(summary(lm_cont))[&quot;Water_g&quot;, ]
 
-sens_results &lt;- data.frame(
+#Calculate results (per 100g increase)
+or &lt;- exp(coef_log[1] * 100)
+or_lower &lt;- exp((coef_log[1] - 1.96 * coef_log[2]) * 100)
+or_upper &lt;- exp((coef_log[1] + 1.96 * coef_log[2]) * 100)
+
+beta &lt;- coef_lm[1] * 100
+beta_lower &lt;- (coef_lm[1] - 1.96 * coef_lm[2]) * 100
+beta_upper &lt;- (coef_lm[1] + 1.96 * coef_lm[2]) * 100
+
+#Create results table
+results &lt;- data.frame(
   Outcome = c(&quot;Diabetes (OR per 100g)&quot;, &quot;HbA1c (Beta per 100g)&quot;),
-  Estimate = c(exp(coef_log[1] * 100), coef_lm[1] * 100),
-  Lower = c(exp((coef_log[1] - 1.96*coef_log[2]) * 100),
-            (coef_lm[1] - 1.96*coef_lm[2]) * 100),
-  Upper = c(exp((coef_log[1] + 1.96*coef_log[2]) * 100),
-            (coef_lm[1] + 1.96*coef_lm[2]) * 100),
+  Estimate = sprintf(&quot;%.4f (%.4f-%.4f)&quot;, 
+                     c(or, beta), 
+                     c(or_lower, beta_lower), 
+                     c(or_upper, beta_upper)),
   P = c(coef_log[4], coef_lm[4])
 )
 
-sens_results %&gt;%
-  mutate(
-    `Estimate (95% CI)` = sprintf(&quot;%.4f (%.4f-%.4f)&quot;, Estimate, Lower, Upper),
-    P = ifelse(P &lt; 0.001, &quot;&lt;0.001&quot;, sprintf(&quot;%.3f&quot;, P))
-  ) %&gt;%
-  select(Outcome, `Estimate (95% CI)`, P) %&gt;%
-  kable(caption = &quot;Sensitivity Analysis: Water as Continuous Variable&quot;) %&gt;%
+results$P &lt;- ifelse(results$P &lt; 0.001, &quot;&lt;0.001&quot;, sprintf(&quot;%.3f&quot;, results$P))
+
+#Display table
+kable(results, row.names = FALSE) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption>
-Sensitivity Analysis: Water as Continuous Variable
-</caption>
 <thead>
 <tr>
-<th style="text-align:left;">
-</th>
 <th style="text-align:left;">
 Outcome
 </th>
 <th style="text-align:left;">
-Estimate (95% CI)
+Estimate
 </th>
 <th style="text-align:left;">
 P
@@ -2180,9 +2181,6 @@ P
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-Pr(&gt;&amp;#124;z&amp;#124;)
-</td>
 <td style="text-align:left;">
 Diabetes (OR per 100g)
 </td>
@@ -2195,9 +2193,6 @@ Diabetes (OR per 100g)
 </tr>
 <tr>
 <td style="text-align:left;">
-Pr(&gt;&amp;#124;t&amp;#124;)
-</td>
-<td style="text-align:left;">
 HbA1c (Beta per 100g)
 </td>
 <td style="text-align:left;">
@@ -2209,7 +2204,8 @@ HbA1c (Beta per 100g)
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>write.csv(sens_results, &quot;Sensitivity_Analysis.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#Save to CSV
+write.csv(results, &quot;Sensitivity_Analysis.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -2220,9 +2216,7 @@ cat(sprintf(&quot;N = %d\n\n&quot;, nrow(df)))</code></pre>
 cat(sprintf(&quot;Diabetes prevalence = %.1f%%\n\n&quot;, 100*mean(df$Diabetes == &quot;Yes&quot;)))</code></pre>
 <pre><code>## Diabetes prevalence = 14.4%</code></pre>
 <pre class="r"><code># Water intake by quartiles
-cat(&quot;Water intake (g) by quartiles:\n&quot;)</code></pre>
-<pre><code>## Water intake (g) by quartiles:</code></pre>
-<pre class="r"><code>for(q in levels(df$Water_Q)) {
+for(q in levels(df$Water_Q)) {
   x &lt;- df$Water_g[df$Water_Q == q]
   cat(sprintf(&quot;  %s: Median = %.0f [IQR: %.0f-%.0f]\n&quot;, 
               q, median(x), quantile(x, 0.25), quantile(x, 0.75)))
@@ -2233,9 +2227,7 @@ cat(&quot;Water intake (g) by quartiles:\n&quot;)</code></pre>
 ##   Q4: Median = 4404 [IQR: 4000-5181]</code></pre>
 <pre class="r"><code>cat(&quot;\n&quot;)</code></pre>
 <pre class="r"><code># Diabetes prevalence by quartiles
-cat(&quot;Diabetes prevalence by quartiles:\n&quot;)</code></pre>
-<pre><code>## Diabetes prevalence by quartiles:</code></pre>
-<pre class="r"><code>for(q in levels(df$Water_Q)) {
+for(q in levels(df$Water_Q)) {
   prev &lt;- mean(df$Diabetes[df$Water_Q == q] == &quot;Yes&quot;) * 100
   cat(sprintf(&quot;  %s: %.1f%%\n&quot;, q, prev))
 }</code></pre>
@@ -2313,9 +2305,8 @@ print(p3)</code></pre>
 <p><img src="coding_final_files/figure-html/fig3-1.png" width="768" /></p>
 <pre class="r"><code>ggsave(&quot;figures/fig3_water_hba1c.png&quot;, p3, width = 8, height = 6, dpi = 300)</code></pre>
 </div>
-<div id="figure-4-forest-plot---or-by-quartiles-fixed"
-class="section level1">
-<h1>Figure 4: Forest plot - OR by quartiles (FIXED)</h1>
+<div id="figure-4-forest-plot---or-by-quartiles" class="section level1">
+<h1>Figure 4: Forest plot - OR by quartiles</h1>
 <pre class="r"><code># Only keep rows where Quartile is Q2, Q3, Q4 AND belongs to Fully Adjusted model
 or_plot &lt;- or_results %&gt;%
   mutate(row_id = row_number()) %&gt;%
@@ -2355,9 +2346,9 @@ print(p4)</code></pre>
 <p><img src="coding_final_files/figure-html/fig4-1.png" width="768" /></p>
 <pre class="r"><code>ggsave(&quot;figures/fig4_odds_ratio.png&quot;, p4, width = 8, height = 5, dpi = 300)</code></pre>
 </div>
-<div id="figure-5-forest-plot---beta-by-quartiles-fixed"
+<div id="figure-5-forest-plot---beta-by-quartiles"
 class="section level1">
-<h1>Figure 5: Forest plot - Beta by quartiles (FIXED)</h1>
+<h1>Figure 5: Forest plot - Beta by quartiles</h1>
 <pre class="r"><code># Same logic for beta
 fully_adj_start &lt;- which(beta_results$Model == &quot;Fully Adjusted&quot;)
 if(length(fully_adj_start) &gt; 0) {

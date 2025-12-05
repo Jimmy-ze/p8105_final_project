@@ -291,7 +291,46 @@ $(document).ready(function () {
 </div>
 
 
-
+<div id="data-cleaning-and-processing" class="section level2">
+<h2>Data Cleaning and Processing</h2>
+<p>First, numerical variables were converted to numeric type to prevent
+factor-related computation errors. Second, observations with missing
+values in key variables were removed using na.omit(). Third, the
+categorical variables are recoded:</p>
+<p><span class="var-badge">Gender</span>: 1 = Male, 0 = Female</p>
+<p><span class="var-badge">Smoking</span>: 1 = Smoked ≥100 cigarettes, 0
+= Never smoked</p>
+<p><span class="var-badge">Diabetes</span>: 1 = Diagnosed, 0 = Not
+diagnosed</p>
+<p><span class="var-badge">Race</span>: 1 = Mexican American, 2 = Other
+Hispanic, 3 = Non-Hispanic White 4=Non-Hispanic Black</p>
+<p><span class="var-badge">Education</span>: scale 1-5, from “&lt;9th
+grade” to “College graduate or above.”</p>
+<p><span class="var-badge">Water_Q</span>: Q1 corresponds to
+participants in the lowest 25% of daily water intake (lowest hydration
+group), Q2 and Q3 represent the middle 50% of water consumers, and Q4
+corresponds to the highest 25% of daily water intake (highest hydration
+group).</p>
+</div>
+<div id="exploratory-analysis" class="section level2">
+<h2>Exploratory Analysis</h2>
+<p>We examined the distribution of water consumption across diabetes
+groups, assessed potential confounders, and visualized early
+associations between hydration and metabolic health. The overall process
+include discovering overall trend, model examination, sensitivity
+analysis and stratified visual checks.</p>
+</div>
+<div id="primary-models" class="section level2">
+<h2>Primary Models</h2>
+<p>To model diabetes status, we fit a sequence of logistic regression
+models with water quartiles as the main exposure: <img
+src="images/md1.png" /></p>
+</div>
+<div id="sensitivity-analysis" class="section level2">
+<h2>Sensitivity Analysis</h2>
+<p>To check robustness, we reanalyzed water as a continuous variable:
+<img src="images/md2.png" /></p>
+</div>
 
 
 

@@ -418,30 +418,37 @@ lm_cont <- lm(HbA1c ~ Water_g + Age + Gender + Race + Education + Income_PIR +
                 BMI + Smoking + Energy_kcal + Sugar_g, 
               data = df)
 
-#Extract results (per 100g increase)
-coef_log <- summary(m_cont)$coefficients["Water_g", ]
-coef_lm <- summary(lm_cont)$coefficients["Water_g", ]
+#Extract coefficients
+coef_log <- coef(summary(m_cont))["Water_g", ]
+coef_lm <- coef(summary(lm_cont))["Water_g", ]
 
-sens_results <- data.frame(
+#Calculate results (per 100g increase)
+or <- exp(coef_log[1] * 100)
+or_lower <- exp((coef_log[1] - 1.96 * coef_log[2]) * 100)
+or_upper <- exp((coef_log[1] + 1.96 * coef_log[2]) * 100)
+
+beta <- coef_lm[1] * 100
+beta_lower <- (coef_lm[1] - 1.96 * coef_lm[2]) * 100
+beta_upper <- (coef_lm[1] + 1.96 * coef_lm[2]) * 100
+
+#Create results table
+results <- data.frame(
   Outcome = c("Diabetes (OR per 100g)", "HbA1c (Beta per 100g)"),
-  Estimate = c(exp(coef_log[1] * 100), coef_lm[1] * 100),
-  Lower = c(exp((coef_log[1] - 1.96*coef_log[2]) * 100),
-            (coef_lm[1] - 1.96*coef_lm[2]) * 100),
-  Upper = c(exp((coef_log[1] + 1.96*coef_log[2]) * 100),
-            (coef_lm[1] + 1.96*coef_lm[2]) * 100),
+  Estimate = sprintf("%.4f (%.4f-%.4f)", 
+                     c(or, beta), 
+                     c(or_lower, beta_lower), 
+                     c(or_upper, beta_upper)),
   P = c(coef_log[4], coef_lm[4])
 )
 
-sens_results %>%
-  mutate(
-    `Estimate (95% CI)` = sprintf("%.4f (%.4f-%.4f)", Estimate, Lower, Upper),
-    P = ifelse(P < 0.001, "<0.001", sprintf("%.3f", P))
-  ) %>%
-  select(Outcome, `Estimate (95% CI)`, P) %>%
-  kable(caption = "Sensitivity Analysis: Water as Continuous Variable") %>%
+results$P <- ifelse(results$P < 0.001, "<0.001", sprintf("%.3f", results$P))
+
+#Display table
+kable(results, row.names = FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
-write.csv(sens_results, "Sensitivity_Analysis.csv", row.names = FALSE)
+#Save to CSV
+write.csv(results, "Sensitivity_Analysis.csv", row.names = FALSE)
 ```
 
 
@@ -454,7 +461,6 @@ cat(sprintf("N = %d\n\n", nrow(df)))
 cat(sprintf("Diabetes prevalence = %.1f%%\n\n", 100*mean(df$Diabetes == "Yes")))
 
 # Water intake by quartiles
-cat("Water intake (g) by quartiles:\n")
 for(q in levels(df$Water_Q)) {
   x <- df$Water_g[df$Water_Q == q]
   cat(sprintf("  %s: Median = %.0f [IQR: %.0f-%.0f]\n", 
@@ -463,7 +469,6 @@ for(q in levels(df$Water_Q)) {
 cat("\n")
 
 # Diabetes prevalence by quartiles
-cat("Diabetes prevalence by quartiles:\n")
 for(q in levels(df$Water_Q)) {
   prev <- mean(df$Diabetes[df$Water_Q == q] == "Yes") * 100
   cat(sprintf("  %s: %.1f%%\n", q, prev))
@@ -538,7 +543,7 @@ ggsave("figures/fig3_water_hba1c.png", p3, width = 8, height = 6, dpi = 300)
 ```
 
 
-# Figure 4: Forest plot - OR by quartiles (FIXED)
+# Figure 4: Forest plot - OR by quartiles
 ```{r fig4, fig.width=8, fig.height=5}
 # Only keep rows where Quartile is Q2, Q3, Q4 AND belongs to Fully Adjusted model
 or_plot <- or_results %>%
@@ -579,7 +584,7 @@ print(p4)
 ggsave("figures/fig4_odds_ratio.png", p4, width = 8, height = 5, dpi = 300)
 ```
 
-# Figure 5: Forest plot - Beta by quartiles (FIXED)
+# Figure 5: Forest plot - Beta by quartiles
 ```{r fig5, fig.width=8, fig.height=5}
 # Same logic for beta
 fully_adj_start <- which(beta_results$Model == "Fully Adjusted")
