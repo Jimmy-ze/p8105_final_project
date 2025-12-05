@@ -1,0 +1,41 @@
+---
+title: "P8105_FinalProjectReport_AdditionalAnalysis&Discussion"
+author: "Xinyi Yao"
+date: "2025-12-05"
+output: html_document
+---
+
+## Additional Analysis
+**1. Logistic Regression: Water Intake and Diabetes Status**
+To determine whether water intake was independently associated with diabetes prevalence, we fitted three nested logistic regression models using water-intake quartiles (Q1–Q4) as the primary exposure. Model 1 was unadjusted; Model 2 adjusted for demographic and socioeconomic characteristics; and Model 3 further adjusted for BMI, smoking history, and dietary factors including total energy and sugar intake. As shown in the crude prevalence comparison (Figure 6), diabetes prevalence differed minimally across quartiles, and this pattern carried through in the adjusted models.
+
+Across all three models, the estimated odds ratios for Q2–Q4 relative to Q1 remained close to 1.0, and most confidence intervals crossed the null. In the fully adjusted model, the highest quartile displayed a modestly elevated odds ratio (OR = 1.61; 95% CI: 1.17–2.21), but this effect did not align with trends observed in unadjusted analyses or exploratory visualizations. The corresponding forest plot (Figure 4) illustrates the minimal and inconsistent magnitude of associations. Although the trend test reached statistical significance (p = 0.005), the inconsistencies across models and the small effect size reinforce the conclusion that higher water intake is not associated with reduced diabetes risk.
+
+**2. Linear Regression: Water Intake and HbA1c**
+We next examined whether water intake was associated with HbA1c, a clinical measure of long-term glycemic control. The same adjusted modeling strategy was used. In unadjusted analyses, higher water intake appeared weakly associated with lower HbA1c, consistent with the modest differences shown in the quartile means (Figure 7), but this pattern reversed after adjustment.
+
+In the fully adjusted model, the differences across water-intake quartiles were minimal. Compared with Q1, Q4 exhibited a small positive association (β = 0.105; 95% CI: 0.002–0.209). While statistically significant at the 0.05 level, the effect size was extremely small and far below thresholds considered clinically meaningful. The trend test was marginal (p = 0.056), further indicating a lack of robust dose–response association. This finding is visually consistent with the continuous relationship shown in (Figure 3) and the adjusted β-coefficient forest plot (Figure 5).
+
+**3. Sensitivity Analysis: Water Intake as a Continuous Exposure**
+To ensure that the quartile-based approach did not obscure possible linear or nonlinear relationships, we repeated the analyses using water intake as a continuous variable. Effect estimates were scaled to reflect a 100-gram increase in daily water consumption.
+
+Both the logistic and linear sensitivity models produced extremely small coefficients. A 100-gram increase was associated with a 1.1% increase in diabetes odds and a 0.004-point increase in HbA1c—changes that are negligible both statistically and clinically. Even a 1-liter increase in water intake (approximately 1000 g) translated to only trivial changes in either outcome. These findings confirm the continuous patterns observed in (Figure 3) and align with the low correlations illustrated in the heatmap (Figure 8).
+
+**4. Stratified and Descriptive Analyses**
+We also explored whether the water–diabetes relationship differed across BMI categories. Stratified boxplots (Figure 9) and ANOVA tests indicated no meaningful variation among normal-weight or obese individuals. A small statistical difference was observed among overweight individuals, but the magnitude of the effect was minimal and inconsistent with patterns in other strata. Similar null patterns emerged when comparing crude diabetes prevalence and mean HbA1c values across water-intake quartiles, as confidence intervals substantially overlapped across all groups.
+
+**5. Correlation Structure**
+Additionally, a correlation analysis (Figure 8) revealed that water intake exhibited very weak correlations with age, BMI, energy intake, sugar consumption, and HbA1c (|r| < 0.1 for all variables). This low degree of correlation suggests that multicollinearity does not affect model stability and that water intake offers little predictive value for diabetes-related outcomes relative to other variables.
+
+## Discussion
+This project evaluated whether daily water intake is associated with diabetes status or glycemic control among U.S. adults using NHANES 2021–2023 data. Across all analytic approaches—including descriptive statistics, fully adjusted regression models, continuous-exposure sensitivity tests, and stratified evaluations—the results consistently demonstrated that water intake is not meaningfully associated with either diabetes prevalence or HbA1c levels.
+
+The initial descriptive analyses revealed substantial overlap in the distribution of water intake between adults with and without diabetes. HbA1c values were also similar across water-intake quartiles, with only minor differences that lacked clinical or statistical importance. These findings were reinforced by the regression analyses: after adjusting for demographic, socioeconomic, lifestyle, and dietary factors, the association between water intake and both diabetes outcomes was minimal. Although a small, statistically significant positive association appeared in the highest intake quartile in fully adjusted models, the effect was small, inconsistent across analyses, and likely attributable to residual confounding or reverse causation. For example, individuals living with diabetes may increase their water consumption due to increased thirst, a common symptom of hyperglycemia.
+
+The sensitivity analyses, which treated water intake as a continuous variable, further confirmed the absence of a meaningful relationship. Even large differences in daily water consumption corresponded to negligible changes in diabetes odds or HbA1c levels. Stratified analyses by BMI category similarly failed to reveal any consistent or interpretable effect modification.
+
+Taken together, these results suggest that daily water intake, as measured by 24-hour dietary recall in NHANES, does not substantively influence diabetes status or long-term glycemic control. While hydration remains important for general health and physiological function, the evidence from this nationally representative dataset does not support the hypothesis that increasing daily water consumption reduces diabetes risk or improves glycemic outcomes. Factors such as age, adiposity, dietary quality, and socioeconomic status appear to play far more substantial roles in shaping diabetes risk.
+
+This study’s strengths include the use of high-quality national data, clinically measured biomarkers, rigorous multivariable adjustment, and multiple complementary analytic strategies. However, several limitations warrant consideration. The cross-sectional design of NHANES precludes causal inference. Daily water intake is self-reported and may be prone to measurement error, and single-day dietary recall may not accurately reflect habitual hydration patterns. Furthermore, potential confounders such as physical activity, medication use, and kidney function were not included in the final models.
+
+Despite these limitations, the evidence consistently indicates that higher water intake is not associated with improved glycemic outcomes in U.S. adults. Future research may benefit from incorporating longitudinal hydration patterns, objective hydration biomarkers, or physiological measures of fluid balance to further clarify the role of hydration in chronic disease risk.
