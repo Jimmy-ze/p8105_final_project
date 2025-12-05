@@ -3,45 +3,58 @@ title: "Results"
 output: html_document
 ---
 
-## 00000
-1111111
-![](figures/fig1_water_distribution.png)  
-11111  
-11111  
-11111  
-![](figures/fig2_bmi_quartiles.png)  
-22222  
-22222  
-22222  
-![](figures/fig3_water_hba1c.png) 
-33333   
-33333  
-33333  
-![](figures/fig4_odds_ratio.png)  
-44444  
-44444  
-44444  
-![](figures/fig5_beta_coefficient.png)
-55555  
-55555  
-55555  
-![](figures/fig6_diabetes_prevalence.png)  
-66666  
-66666  
-66666  
-![](figures/fig7_hba1c_mean.png)  
-77777  
-77777  
-77777  
-![](figures/fig8_correlation.png)  
-88888  
-88888  
-88888  
-![](figures/fig9_stratified_bmi.png)  
-99999  
-99999  
-99999  
+## Overall Trend
 
-99999  
-99999  
-99999  
+![](figures/fig1_water_distribution.png)  
+The density plot shows that the overall distribution of daily water intake is 
+highly right-skewed, with most adults consuming between 0–5,000 grams per day. 
+Importantly, the curves for individuals with and without diabetes nearly 
+overlap. This suggests that there is no obvious unadjusted difference in water 
+consumption between diabetes groups.
+
+![](figures/fig3_water_hba1c.png) 
+A scatter plot with smoothed curves shows contrasting patterns between diabetes 
+groups.
+
+- For non-diabetic adults, HbA1c remains stable across the water-intake range 
+with no apparent trend.
+- For adults with diabetes, the curve initially slopes downward but rises again 
+at very high consumption values.
+
+The large uncertainty at extreme water intake levels is due to very small sample 
+sizes, which prompted a methodological change: instead of modeling water as a 
+continuous predictor only, we created water-intake quartiles to stabilize 
+estimation and facilitate interpretation. 
+
+## Regression Model
+
+We developed three logistic regression models, from unadjusted to 
+demographics-adjusted and fully adjusted, with water quartiles as the main 
+exposure to model diabetes status.
+
+Across the model evolution, there is no emergence of a protective association. 
+If anything, estimates remain near null or slightly above 1, suggesting no 
+evidence that higher water intake reduces diabetes odds.
+
+Fully adjusted beta coefficients and odds ratios for Q2–Q4 vs Q1 are shown 
+below.
+![](figures/fig4_odds_ratio.png)  
+ 
+![](figures/fig5_beta_coefficient.png)
+ 
+- All odds ratios are close to 1.0, with 95% confidence intervals crossing 1.
+- The P for trend from m3_trend is not significant.
+
+- All estimates are very close to 0, and confidence intervals include 0.
+- The trend test is non-significant in the fully adjusted model.
+
+Across unadjusted, demographics-only, and fully adjusted models, we consistently see no
+meaningful difference in HbA1c by water-intake quartile.
+
+## Sensitivity Analysis
+
+![](images/md2.png)
+
+In both models, the per-100 g effect was extremely small and not statistically
+significant, consistent with the quartile-based results and confirming that 
+treating water as continuous does not reveal a hidden dose–response association.

@@ -39,9 +39,11 @@ trend, model examination, sensitivity analysis and stratified visual checks.
 
 To model diabetes status, we fit a sequence of logistic regression models with 
 water quartiles as the main exposure:
+
 ![](images/md1.png)  
 
 ## Sensitivity Analysis
 
 To check robustness, we reanalyzed water as a continuous variable:
+
 ![](images/md2.png)
