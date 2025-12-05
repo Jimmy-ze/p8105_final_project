@@ -1,0 +1,47 @@
+---
+title: "Results"
+output: html_document
+---
+
+## 00000
+1111111
+![](figures/fig1_water_distribution.png)  
+11111  
+11111  
+11111  
+![](figures/fig2_bmi_quartiles.png)  
+22222  
+22222  
+22222  
+![](figures/fig3_water_hba1c.png) 
+33333   
+33333  
+33333  
+![](figures/fig4_odds_ratio.png)  
+44444  
+44444  
+44444  
+![](figures/fig5_beta_coefficient.png)
+55555  
+55555  
+55555  
+![](figures/fig6_diabetes_prevalence.png)  
+66666  
+66666  
+66666  
+![](figures/fig7_hba1c_mean.png)  
+77777  
+77777  
+77777  
+![](figures/fig8_correlation.png)  
+88888  
+88888  
+88888  
+![](figures/fig9_stratified_bmi.png)  
+99999  
+99999  
+99999  
+
+99999  
+99999  
+99999  

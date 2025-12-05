@@ -1,0 +1,108 @@
+---
+title: "Data Summary"
+output: html_document
+---
+```{r setup, include=FALSE}
+#Read data
+data <- read_excel("final_data.xlsx")
+
+df <- data %>%
+  #Filter out Race categories with 0 observations
+  filter(!Race %in% c(6, 7)) %>%
+  mutate(
+    #Continuous variables as numeric
+    Age = as.numeric(Age),
+    BMI = as.numeric(BMI),
+    Income_PIR = as.numeric(Income_PIR),
+    Energy_kcal = as.numeric(Energy_kcal),
+    Sugar_g = as.numeric(Sugar_g),
+    Water_g = as.numeric(Water_g),
+    HbA1c = as.numeric(HbA1c),
+    
+    #Categorical variables as factors
+    Gender = factor(Gender, levels = c(0, 1), 
+                   labels = c("Female", "Male")),
+    
+    #Only keep Race categories with data (1,2,3,4)
+    Race = factor(Race, levels = c(1, 2, 3, 4),
+                 labels = c("Mexican American", "Other Hispanic", 
+                           "Non-Hispanic White", "Non-Hispanic Black")),
+    
+    Education = factor(Education, levels = c(1, 2, 3, 4, 5),
+                      labels = c("< 9th grade", "9-11th grade", 
+                                "High school/GED", "Some college", 
+                                "College grad+")),
+    
+    Smoking = factor(Smoking, levels = c(0, 1),
+                    labels = c("No", "Yes")),
+    
+    Diabetes = factor(Diabetes, levels = c(0, 1),
+                     labels = c("No", "Yes")),
+    
+    #Create water quartiles
+    Water_Q = cut(Water_g, 
+                  breaks = quantile(Water_g, probs = seq(0, 1, 0.25)),
+                  labels = c("Q1", "Q2", "Q3", "Q4"),
+                  include.lowest = TRUE)
+  )
+```
+
+## NHANES 2021–2023
+
+We use data from the National Health and Nutrition Examination Survey (NHANES), 
+a nationally representative study of U.S. residents that combines interviews, 
+physical examinations, and laboratory measurements. We obtained public-use files 
+for the 2021–2023 cycle and integrated demographic, dietary, examination, 
+laboratory and questionnaire components to build our analytic data set for this 
+project.
+
+After data cleaning and processing, the cleaned data set includes 
+`r scales::comma(nrow(df))` observations and `r ncol(df)` variables.
+
+## Key Variables
+
+<span class="var-badge">Water_g</span>: Total water intake (grams) from 24-hour 
+dietary recall (Day 1); primary exposure, analyzed continuously and in 
+quantiles.
+
+<span class="var-badge">Diabetes</span>: Clinician-diagnosed diabetes status 
+(binary; 1 = yes, 0 = no).
+
+<span class="var-badge">HbA1c</span>: Glycohemoglobin (%); continuous secondary 
+outcome reflecting long-term glycemic control.
+
+## Core Covariates
+
+<span class="var-badge">Age</span>: Participant age in years.
+
+<span class="var-badge">Gender</span>: Male / Female.
+
+<span class="var-badge">Race</span>: Categories for race/ethnicity.
+
+<span class="var-badge">Education</span>: Highest education level completed.
+
+<span class="var-badge">Income_PIR</span>: Income-to-poverty ratio (PIR), a 
+continuous indicator of social and economic status.
+
+<span class="var-badge">BMI</span>: Body mass index (kg/m²).
+
+<span class="var-badge">Smoking</span>: Smoking history/status (binary).
+
+<span class="var-badge">Energy_kcal</span>: Total energy intake (kcal/day) from 
+the same 24-hour recall.
+
+<span class="var-badge">Sugar_g</span>: Total sugar intake (grams/day) from the 
+same 24-hour recall.
+
+## Data Quality Notes
+
+- We align dietary, lab and exam records by participant ID and recall day, and 
+prefer Day-1 intakes for comparability.
+
+- For categorical fields (e.g., education, race/ethnicity, smoking), we apply 
+factor labels.
+
+- Observations with missing value in data is excluded.
+
+- Sensitivity analyses consider water intake in quantiles (Q1–Q4) to assess 
+potential non-linearity.
