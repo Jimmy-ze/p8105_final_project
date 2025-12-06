@@ -74,6 +74,35 @@ Water: Q1 corresponds to participants in the lowest 25% of daily water intake (l
 This section summarizes the exploratory analyses conducted to understand the relationship between water intake and diabetes outcomes. We examined the distribution of water consumption across diabetes groups, assessed potential confounders, and visualized early associations between hydration and metabolic health. The overall process include discovering overall trend, model examination, sensitivity analysis and stratified visual checks.
 
 **Step1: Overall Trend**
+
+
+```{r echo=FALSE, message=FALSE}
+readr::read_csv("Table1.csv", show_col_types = FALSE) |>
+  knitr::kable()
+```
+<center>Table 1. Baseline Characteristics by Diabetes Status</center>
+
+
+Table 1 summarizes baseline characteristics stratified by diabetes status.
+
+Statistically significant differences are observed for age, BMI, HbA1c, energy intake, and sugar intake (all p < 0.05). Adults with diabetes are older, have substantially higher BMI and HbA1c, and show different dietary patterns compared with non-diabetic adults. In contrast, daily water intake is not significantly different between the two groups (p > 0.05), and several sociodemographic variables show limited or inconsistent differences.
+
+These results suggest we should adjust for age, BMI, and dietary factors (Energy_kcal and Sugar_g) in all regression models, as they are clearly associated with diabetes status. At the same time, water intake being non-significant confirms that any potential water–diabetes association must be evaluated through multivariable regression rather than unadjusted comparison.
+
+
+```{r echo=FALSE, message=FALSE}
+readr::read_csv("Table2.csv", show_col_types = FALSE) |>
+  knitr::kable()
+```
+
+<center>Table 2. Baseline Characteristics by Water Intake Quartiles</center>
+
+Table 2 presents participant characteristics across water-intake quartiles (Q1–Q4).
+
+Across quartiles, energy intake and sugar intake differ significantly (p < 0.05), increasing with higher water consumption. In contrast, BMI, gender, race, education, smoking status, and income level do not show statistically significant differences across quartiles (p > 0.05). HbA1c and diabetes status also show no strong unadjusted differences across quartiles.
+
+The non-significant differences in BMI and key sociodemographic variables across water quartiles supports the treatment of Water_Q as the primary exposure rather than a proxy for obesity or socioeconomic status. However, the significant differences in Energy_kcal and Sugar_g require dietary adjustment to prevent confounding when estimating the independent effect of water intake.
+
 ![](figures/fig1_water_distribution.png)
 <center>Figure 1</center>
 The density plot shows that the overall distribution of daily water intake is highly right-skewed, with most adults consuming between 0–5,000 grams per day. Importantly, the curves for individuals with and without diabetes nearly overlap. This suggests that there is no obvious unadjusted difference in water consumption between diabetes groups.
