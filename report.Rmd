@@ -165,17 +165,38 @@ HbA1c in higher quartiles.
 ## Additional Analysis
 **1. Logistic Regression: Water Intake and Diabetes Status**
 
+```{r echo=FALSE, message=FALSE}
+library(tidyverse)
+readr::read_csv("Logistic_Results.csv", show_col_types = FALSE) |>
+  mutate(across(everything(), ~ ifelse(is.na(.), "", .))) |>
+  knitr::kable()
+```
+<center>Table 3. Logistic Regression Results</center>
+
 To determine whether water intake was independently associated with diabetes prevalence, we fitted three nested logistic regression models using water-intake quartiles (Q1–Q4) as the primary exposure. Model 1 was unadjusted; Model 2 adjusted for demographic and socioeconomic characteristics; and Model 3 further adjusted for BMI, smoking history, and dietary factors including total energy and sugar intake. As shown in the crude prevalence comparison (Figure 6), diabetes prevalence differed minimally across quartiles, and this pattern carried through in the adjusted models.
 
 Across all three models, the estimated odds ratios for Q2–Q4 relative to Q1 remained close to 1.0, and most confidence intervals crossed the null. In the fully adjusted model, the highest quartile displayed a modestly elevated odds ratio (OR = 1.61; 95% CI: 1.17–2.21), but this effect did not align with trends observed in unadjusted analyses or exploratory visualizations. The corresponding forest plot (Figure 4) illustrates the minimal and inconsistent magnitude of associations. Although the trend test reached statistical significance (p = 0.005), the inconsistencies across models and the small effect size reinforce the conclusion that higher water intake is not associated with reduced diabetes risk.
 
 **2. Linear Regression: Water Intake and HbA1c**
 
+```{r echo=FALSE, message=FALSE}
+readr::read_csv("Linear_Results.csv", show_col_types = FALSE) |>
+  mutate(across(everything(), ~ ifelse(is.na(.), "", .))) |>
+  knitr::kable()
+```
+<center>Table 4. Linear Regression Results</center>
+
 We next examined whether water intake was associated with HbA1c, a clinical measure of long-term glycemic control. The same adjusted modeling strategy was used. In unadjusted analyses, higher water intake appeared weakly associated with lower HbA1c, consistent with the modest differences shown in the quartile means (Figure 7), but this pattern reversed after adjustment.
 
 In the fully adjusted model, the differences across water-intake quartiles were minimal. Compared with Q1, Q4 exhibited a small positive association (β = 0.105; 95% CI: 0.002–0.209). While statistically significant at the 0.05 level, the effect size was extremely small and far below thresholds considered clinically meaningful. The trend test was marginal (p = 0.056), further indicating a lack of robust dose–response association. This finding is visually consistent with the continuous relationship shown in (Figure 3) and the adjusted β-coefficient forest plot (Figure 5).
 
 **3. Sensitivity Analysis: Water Intake as a Continuous Exposure**
+
+```{r echo=FALSE, message=FALSE}
+readr::read_csv("Sensitivity_Analysis.csv", show_col_types = FALSE) |>
+  knitr::kable()
+```
+<center>Table 5. Sensitivity Analysis Results</center>
 
 To ensure that the quartile-based approach did not obscure possible linear or nonlinear relationships, we repeated the analyses using water intake as a continuous variable. Effect estimates were scaled to reflect a 100-gram increase in daily water consumption.
 
