@@ -19,7 +19,7 @@ navbar:
     - icon: fa-github
       href: https://github.com/Jimmy-ze/p8105_final_project
     - icon: fa-youtube fa-lg
-      href: awaiting
+      href: https://youtu.be/Lt3oAjEe9-E?si=Mtyj14n43WMnM4pT
 output:
   html_document:
     theme: cosmo

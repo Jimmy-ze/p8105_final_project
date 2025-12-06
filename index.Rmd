@@ -12,7 +12,7 @@ Water Intake & Diabetes Outcomes</h1> <p class="lead"> NHANES 2021–2023<br>
 </p> <div class="mt-3"> 
 <a class="btn btn-primary btn-lg me-2" href="results.html"> 
 <i class="fa fa-chart-line"></i> View Results </a> 
-<a class="btn btn-outline-light btn-lg" href="awaiting"> 
+<a class="btn btn-outline-light btn-lg" href="https://youtu.be/Lt3oAjEe9-E?si=Mtyj14n43WMnM4pT"> 
 <i class="fa fa-play-circle"></i> Watch 2-min Screencast </a> </div> </div>
 
 ## Project Overview
